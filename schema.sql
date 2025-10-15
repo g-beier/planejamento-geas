@@ -1,5 +1,6 @@
 -- ENUMS
-CREATE TYPE indicator_area AS ENUM (
+
+CREATE TYPE area_indicador AS ENUM (
   'VALORES',
   'PROGRAMA_EDUCATIVO',
   'RECURSOS_HUMANOS',
@@ -8,74 +9,108 @@ CREATE TYPE indicator_area AS ENUM (
   'CRESCIMENTO'
 );
 
-CREATE TYPE status_enum AS ENUM (
+CREATE TYPE status_avaliacao AS ENUM (
   'SIM',
   'EM_PARTE',
   'NAO'
 );
 
-CREATE TYPE action_type AS ENUM (
+CREATE TYPE tipo_acao AS ENUM (
   'DATA_FIXA',
   'PRAZO_FLEXIVEL'
 );
 
--- PLANOS
-CREATE TABLE plan (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  year INT NOT NULL,
-  deadline DATE NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TYPE tipo_agendamento AS ENUM (
+  'UNICO',
+  'RECORRENTE',
+  'CICLO'
 );
 
--- INDICADORES (biblioteca)
-CREATE TABLE indicator (
-  id char(3) PRIMARY KEY,
-  question TEXT NOT NULL,
-  area indicator_area NOT NULL
+-- TABELAS
+
+CREATE TABLE plano (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  titulo TEXT NOT NULL,
+  ano INTEGER NOT NULL,
+  prazo_final DATE NOT NULL,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- RELAÇÃO plano <-> indicador (com status e parecer)
-CREATE TABLE diagnosis (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  plan_id UUID NOT NULL REFERENCES plan(id) ON DELETE CASCADE,
-  indicator_id char(3) NOT NULL REFERENCES indicator(id) ON DELETE CASCADE,
-  status status_enum,
-  justification TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE indicador (
+  id CHAR(3) PRIMARY KEY,
+  pergunta TEXT NOT NULL,
+  area area_indicador NOT NULL
 );
 
--- METAS
-CREATE TABLE goal (
+CREATE TABLE diagnostico (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  diagnosis_id UUID NOT NULL REFERENCES diagnosis(id) ON DELETE CASCADE,
-  description TEXT NOT NULL
+  plano_id UUID NOT NULL REFERENCES plano(id) ON DELETE CASCADE,
+  indicador_id CHAR(3) NOT NULL REFERENCES indicador(id) ON DELETE CASCADE,
+  status status_avaliacao,
+  justificativa TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- AÇÕES (pertencem ao plano)
-CREATE TABLE action (
+CREATE TABLE meta (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  plan_id UUID NOT NULL REFERENCES plan(id) ON DELETE CASCADE,
-  description TEXT NOT NULL,
-  responsibles TEXT NOT NULL,
-  frequency TEXT NOT NULL,
-  fixed_date DATE,
-  type action_type NOT NULL
+  diagnostico_id UUID NOT NULL REFERENCES diagnostico(id) ON DELETE CASCADE,
+  descricao TEXT NOT NULL,
+  valor_alvo TEXT,
+  unidade TEXT,
+  prazo DATE
 );
 
--- RELAÇÃO N:N entre ações e indicadores
-CREATE TABLE action_indicator (
+CREATE TABLE responsavel (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  action_id UUID NOT NULL REFERENCES action(id) ON DELETE CASCADE,
-  diagnosis_id UUID NOT NULL REFERENCES diagnosis(id) ON DELETE CASCADE,
-  UNIQUE (action_id, diagnosis_id)
+  registro TEXT NOT NULL UNIQUE,
+  nome_exibicao TEXT NOT NULL
 );
 
--- LOG DE AÇÕES REALIZADAS
-CREATE TABLE action_log (
+CREATE TABLE acao (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  action_id UUID NOT NULL REFERENCES action(id) ON DELETE CASCADE,
-  done_at TIMESTAMP,
-  notes TEXT,
-  done BOOLEAN DEFAULT FALSE
+  plano_id UUID NOT NULL REFERENCES plano(id) ON DELETE CASCADE,
+  descricao TEXT NOT NULL,
+  tipo tipo_acao NOT NULL
+);
+
+CREATE TABLE agendamento_acao (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  acao_id UUID NOT NULL REFERENCES acao(id) ON DELETE CASCADE,
+  tipo tipo_agendamento NOT NULL,
+  descricao TEXT,
+  data_fixa DATE,
+  ciclo INTEGER,
+  intervalo TEXT
+);
+
+CREATE TABLE ocorrencia_acao (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agendamento_id UUID NOT NULL REFERENCES agendamento_acao(id) ON DELETE CASCADE,
+  data_planejada DATE NOT NULL,
+  realizado BOOLEAN DEFAULT FALSE,
+  data_realizacao TIMESTAMP,
+  observacoes TEXT,
+  atualizado_por UUID REFERENCES responsavel(id)
+);
+
+CREATE TABLE acao_diagnostico (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  acao_id UUID NOT NULL REFERENCES acao(id) ON DELETE CASCADE,
+  diagnostico_id UUID NOT NULL REFERENCES diagnostico(id) ON DELETE CASCADE,
+  UNIQUE (acao_id, diagnostico_id)
+);
+
+CREATE TABLE acao_responsavel (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  acao_id UUID NOT NULL REFERENCES acao(id) ON DELETE CASCADE,
+  responsavel_id UUID NOT NULL REFERENCES responsavel(id) ON DELETE CASCADE,
+  UNIQUE (acao_id, responsavel_id)
+);
+
+CREATE TABLE ciclo_programa (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  plano_id UUID NOT NULL REFERENCES plano(id) ON DELETE CASCADE,
+  nome TEXT NOT NULL,
+  data_inicio DATE NOT NULL,
+  data_fim DATE NOT NULL
 );

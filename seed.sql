@@ -1,4 +1,8 @@
-INSERT INTO indicator (id, question, area) VALUES
+INSERT INTO responsavel (registro, nome_exibicao) VALUES
+  ('607475-8', 'GUSTAV'),
+  ('361-1', 'GIBA');
+
+INSERT INTO indicador  (id, pergunta, area) VALUES
   ('001', 'Conseguimos fazer com que nossos jovens assumam seu próprio desenvolvimento e sejam responsáveis pelas decisões que tomam?', 'VALORES'),
   ('002', 'Nossos jovens expressam por ações seu gosto pela vida e sua disposição para conviver com os demais, valorizando igualmente a todas as pessoas?', 'VALORES'),
   ('003', 'Nossos jovens manifestam seu interesse pelo meio ambiente, participando de atividades voltadas para preservá-lo e melhorá-lo?', 'VALORES'),
