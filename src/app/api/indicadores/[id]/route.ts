@@ -10,7 +10,7 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; // ✅ compatível com Next 14+
+    const { id } = await context.params;
     const indicador = await indicadorService.buscarPorId(id);
     return Response.json(indicador, { status: 200 });
   } catch (error) {

@@ -15,17 +15,6 @@ CREATE TYPE status_avaliacao AS ENUM (
   'NAO'
 );
 
-CREATE TYPE tipo_acao AS ENUM (
-  'DATA_FIXA',
-  'PRAZO_FLEXIVEL'
-);
-
-CREATE TYPE tipo_agendamento AS ENUM (
-  'UNICO',
-  'RECORRENTE',
-  'CICLO'
-);
-
 -- TABELAS
 
 CREATE TABLE plano (
@@ -70,27 +59,19 @@ CREATE TABLE acao (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   plano_id UUID NOT NULL REFERENCES plano(id) ON DELETE CASCADE,
   descricao TEXT NOT NULL,
-  tipo tipo_acao NOT NULL
-);
-
-CREATE TABLE agendamento_acao (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  acao_id UUID NOT NULL REFERENCES acao(id) ON DELETE CASCADE,
-  tipo tipo_agendamento NOT NULL,
-  descricao TEXT,
-  data_fixa DATE,
-  ciclo INTEGER,
-  intervalo TEXT
+  frequencia TEXT,
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ocorrencia_acao (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  agendamento_id UUID NOT NULL REFERENCES agendamento_acao(id) ON DELETE CASCADE,
-  data_planejada DATE NOT NULL,
+  acao_id UUID NOT NULL REFERENCES acao(id) ON DELETE CASCADE,
+  referencia TEXT NOT NULL,
   realizado BOOLEAN DEFAULT FALSE,
   data_realizacao TIMESTAMP,
   observacoes TEXT,
-  atualizado_por UUID REFERENCES responsavel(id)
+  atualizado_por UUID REFERENCES responsavel(id),
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE acao_diagnostico (

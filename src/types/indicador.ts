@@ -1,13 +1,5 @@
-export type AreaIndicador =
-  | "VALORES"
-  | "PROGRAMA_EDUCATIVO"
-  | "RECURSOS_HUMANOS"
-  | "GESTAO"
-  | "FINANCAS"
-  | "CRESCIMENTO";
+import { DB } from "@infra/db";
+import { Selectable } from "kysely";
 
-export interface Indicador {
-  id: string;
-  pergunta: string;
-  area: AreaIndicador;
-}
+export type IndicadorTable = DB["indicador"];
+export type Indicador = Selectable<IndicadorTable>;

@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const MetaSchema = z.object({
-  id: z.string().uuid(),
-  diagnostico_id: z.string().uuid(),
+  id: z.uuid(),
+  diagnostico_id: z.uuid(),
   descricao: z.string(),
   valor_alvo: z.string().optional(),
   unidade: z.string().optional(),
-  prazo: z.string().date().optional(),
+  prazo: z.iso.date().optional(),
 });

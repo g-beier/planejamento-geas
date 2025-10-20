@@ -1,13 +1,14 @@
 import { z } from "zod";
 
-const AreaIndicador = z.enum([
-  "VALORES",
-  "PROGRAMA_EDUCATIVO",
-  "RECURSOS_HUMANOS",
-  "GESTAO",
-  "FINANCAS",
-  "CRESCIMENTO",
-]);
+export enum AreaIndicadorEnum {
+  VALORES = "VALORES",
+  PROGRAMA_EDUCATIVO = "PROGRAMA_EDUCATIVO",
+  RECURSOS_HUMANOS = "RECURSOS_HUMANOS",
+  GESTAO = "GESTAO",
+  FINANCAS = "FINANCAS",
+  CRESCIMENTO = "CRESCIMENTO",
+}
+const AreaIndicador = z.enum(AreaIndicadorEnum);
 
 export const IndicadorSchema = z.object({
   id: z.string().length(3),

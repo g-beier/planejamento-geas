@@ -1,6 +1,6 @@
-import { planoRepository } from "@/domain/repositories/planoRepository";
-import { PlanoCreateInput, PlanoUpdateInput } from "@/types/plano";
-import { NotFoundError, ValidationError } from "@/infra/errors";
+import { planoRepository } from "@repositories";
+import { NotFoundError, ValidationError } from "@infra/errors";
+import { PlanoCreateSchema, PlanoUpdateSchema } from "@schemas";
 
 export const planoService = {
   async listarTodos() {
@@ -13,17 +13,29 @@ export const planoService = {
     return plano;
   },
 
-  async criar(dados: PlanoCreateInput) {
-    if (!dados.titulo || !dados.ano || !dados.prazo_final) {
-      throw new ValidationError("Campos obrigatórios ausentes");
+  async criar(body: unknown) {
+    const parsed = PlanoCreateSchema.safeParse(body);
+
+    if (!parsed.success) {
+      throw new ValidationError(
+        parsed.error.issues.map((e) => e.message).join(", ")
+      );
     }
 
-    const plano = await planoRepository.create(dados);
+    const plano = await planoRepository.create(parsed.data);
     return plano;
   },
 
-  async atualizar(id: string, dados: PlanoUpdateInput) {
-    const plano = await planoRepository.update(id, dados);
+  async atualizar(id: string, body: unknown) {
+    const parsed = PlanoUpdateSchema.safeParse(body);
+
+    if (!parsed.success) {
+      throw new ValidationError(
+        parsed.error.issues.map((e) => e.message).join(", ")
+      );
+    }
+
+    const plano = await planoRepository.update(id, parsed.data);
     if (!plano) throw new NotFoundError("Plano não encontrado");
     return plano;
   },

@@ -1,13 +1,8 @@
-import { DB, db } from "@/infra/db";
-import { Insertable, Selectable, Updateable } from "kysely";
-
-export type DiagnosticoTable = DB["diagnostico"];
-export type Diagnostico = Selectable<DiagnosticoTable>;
-export type NovoDiagnostico = Insertable<DiagnosticoTable>;
-export type AtualizaDiagnostico = Updateable<DiagnosticoTable>;
+import { db } from "@/infra/db";
+import { AtualizaDiagnostico, Diagnostico, NovoDiagnostico } from "@/types";
 
 export const diagnosticoRepository = {
-  async listarPorPlano(planoId: string): Promise<Diagnostico[]> {
+  async findByPlano(planoId: string): Promise<Diagnostico[]> {
     return db
       .selectFrom("diagnostico")
       .selectAll()
@@ -16,7 +11,7 @@ export const diagnosticoRepository = {
       .execute();
   },
 
-  async buscarPorId(id: string): Promise<Diagnostico | undefined> {
+  async findById(id: string): Promise<Diagnostico | undefined> {
     return db
       .selectFrom("diagnostico")
       .selectAll()
@@ -24,7 +19,7 @@ export const diagnosticoRepository = {
       .executeTakeFirst();
   },
 
-  async criar(data: NovoDiagnostico): Promise<Diagnostico> {
+  async create(data: NovoDiagnostico): Promise<Diagnostico> {
     const [novo] = await db
       .insertInto("diagnostico")
       .values(data)
@@ -33,7 +28,7 @@ export const diagnosticoRepository = {
     return novo;
   },
 
-  async atualizar(id: string, data: AtualizaDiagnostico): Promise<Diagnostico> {
+  async update(id: string, data: AtualizaDiagnostico): Promise<Diagnostico> {
     const [atualizado] = await db
       .updateTable("diagnostico")
       .set(data)
@@ -43,7 +38,17 @@ export const diagnosticoRepository = {
     return atualizado;
   },
 
-  async excluir(id: string): Promise<void> {
-    await db.deleteFrom("diagnostico").where("id", "=", id).execute();
+  async delete(id: string): Promise<boolean> {
+    const res = await db
+      .deleteFrom("diagnostico")
+      .where("id", "=", id)
+      .executeTakeFirst();
+
+    const count =
+      typeof res.numDeletedRows === "bigint"
+        ? Number(res.numDeletedRows)
+        : Number(res.numDeletedRows ?? 0);
+
+    return count > 0;
   },
 };

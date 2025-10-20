@@ -1,14 +1,11 @@
-// src/domain/repositories/planoRepository.ts
-import { db } from "@/infra/db";
-import { Plano, PlanoCreateInput, PlanoUpdateInput } from "@/types/plano";
+import { Plano, NovoPlano, AtualizaPlano } from "@/types";
+import { db } from "@infra/db";
 
 export const planoRepository = {
-  // nunca null: pode retornar [] vazia
   async findAll(): Promise<Plano[]> {
     return db.selectFrom("plano").selectAll().execute();
   },
 
-  // pode não existir
   async findById(id: string): Promise<Plano | null> {
     const row = await db
       .selectFrom("plano")
@@ -18,8 +15,7 @@ export const planoRepository = {
     return row ?? null;
   },
 
-  // garante retorno (se o banco não inserir algo, lança)
-  async create(data: PlanoCreateInput): Promise<Plano> {
+  async create(data: NovoPlano): Promise<Plano> {
     const row = await db
       .insertInto("plano")
       .values({
@@ -28,12 +24,11 @@ export const planoRepository = {
         prazo_final: data.prazo_final,
       })
       .returningAll()
-      .executeTakeFirstOrThrow(); // <- garante não-nulo
+      .executeTakeFirstOrThrow();
     return row;
   },
 
-  // pode não existir
-  async update(id: string, data: PlanoUpdateInput): Promise<Plano | null> {
+  async update(id: string, data: AtualizaPlano): Promise<Plano | null> {
     const row = await db
       .updateTable("plano")
       .set({
@@ -43,17 +38,16 @@ export const planoRepository = {
       })
       .where("id", "=", id)
       .returningAll()
-      .executeTakeFirst(); // <- pode ser undefined
+      .executeTakeFirst();
     return row ?? null;
   },
 
-  // retorna boolean com base no número de linhas deletadas (BigInt)
   async remove(id: string): Promise<boolean> {
     const res = await db
       .deleteFrom("plano")
       .where("id", "=", id)
       .executeTakeFirst();
-    // Kysely retorna { numDeletedRows: bigint | string }, dependendo do driver
+
     const count =
       typeof res.numDeletedRows === "bigint"
         ? Number(res.numDeletedRows)

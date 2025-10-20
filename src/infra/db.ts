@@ -53,35 +53,23 @@ export interface ResponsavelTable {
   nome_exibicao: string;
 }
 
-export type TipoAcao = "DATA_FIXA" | "PRAZO_FLEXIVEL";
-
 export interface AcaoTable {
   id: Generated<string>;
   plano_id: string;
   descricao: string;
-  tipo: TipoAcao;
-}
-
-export type TipoAgendamento = "UNICO" | "RECORRENTE" | "CICLO";
-
-export interface AgendamentoAcaoTable {
-  id: Generated<string>;
-  acao_id: string;
-  tipo: TipoAgendamento;
-  descricao: string | null;
-  data_fixa: string | null;
-  ciclo: number | null;
-  intervalo: string | null;
+  frequencia: string;
+  criado_em: string | null;
 }
 
 export interface OcorrenciaAcaoTable {
   id: Generated<string>;
-  agendamento_id: string;
-  data_planejada: string;
+  acao_id: string;
+  referencia: string;
   realizado: boolean;
   data_realizacao: string | null;
   observacoes: string | null;
   atualizado_por: string | null;
+  criado_em: string | null;
 }
 
 export interface AcaoDiagnosticoTable {
@@ -96,14 +84,6 @@ export interface AcaoResponsavelTable {
   responsavel_id: string;
 }
 
-export interface CicloProgramaTable {
-  id: Generated<string>;
-  plano_id: string;
-  nome: string;
-  data_inicio: string;
-  data_fim: string;
-}
-
 /**
  * Interface DB agregando todas as tabelas
  */
@@ -114,11 +94,9 @@ export interface DB {
   meta: MetaTable;
   responsavel: ResponsavelTable;
   acao: AcaoTable;
-  agendamento_acao: AgendamentoAcaoTable;
   ocorrencia_acao: OcorrenciaAcaoTable;
   acao_diagnostico: AcaoDiagnosticoTable;
   acao_responsavel: AcaoResponsavelTable;
-  ciclo_programa: CicloProgramaTable;
 }
 
 /**

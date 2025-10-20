@@ -1,9 +1,9 @@
-import { indicadorRepository } from "@/domain/repositories/indicadorRepository";
-import { AreaIndicador } from "@/types/indicador";
-import { NotFoundError } from "@/infra/errors";
+import { indicadorRepository } from "@repositories";
+import { NotFoundError } from "@infra/errors";
+import { AreaIndicadorEnum } from "@schemas";
 
 export const indicadorService = {
-  async listarTodos(area?: AreaIndicador) {
+  async listarTodos(area?: AreaIndicadorEnum) {
     return indicadorRepository.findAll(area);
   },
 

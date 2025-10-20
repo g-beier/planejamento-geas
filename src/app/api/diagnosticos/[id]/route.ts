@@ -3,7 +3,7 @@ import { diagnosticoService } from "@/domain/services";
 import { handleError } from "@/infra/errors";
 
 /**
- * GET /api/diagnosticos/{id}
+ * GET /api/diagnosticos/:id
  * Retorna um diagnóstico específico pelo ID.
  */
 export async function GET(
@@ -14,7 +14,7 @@ export async function GET(
     const { params } = await context;
     const { id } = params;
 
-    const diagnostico = await diagnosticoService.obterPorId(id);
+    const diagnostico = await diagnosticoService.buscarPorId(id);
     if (!diagnostico) {
       return Response.json(
         { error: "Diagnóstico não encontrado" },
@@ -29,7 +29,7 @@ export async function GET(
 }
 
 /**
- * PUT /api/diagnosticos/{id}
+ * PUT /api/diagnosticos/:id
  * Atualiza o status e a justificativa de um diagnóstico.
  */
 export async function PUT(
@@ -50,7 +50,7 @@ export async function PUT(
 }
 
 /**
- * DELETE /api/diagnosticos/{id}
+ * DELETE /api/diagnosticos/:id
  * Remove permanentemente um diagnóstico.
  */
 export async function DELETE(

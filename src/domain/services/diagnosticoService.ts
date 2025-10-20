@@ -1,38 +1,47 @@
-import { diagnosticoRepository } from "@/domain/repositories";
-import { z } from "zod";
-import { StatusAvaliacao } from "@/types/diagnostico";
-
-const DiagnosticoCreateSchema = z.object({
-  plano_id: z.string().uuid(),
-  indicador_id: z.string().length(3),
-  status: z.nativeEnum(StatusAvaliacao).optional(),
-  justificativa: z.string().optional(),
-});
-
-const DiagnosticoUpdateSchema = DiagnosticoCreateSchema.partial();
+import { diagnosticoRepository } from "@repositories";
+import { NotFoundError, ValidationError } from "@infra/errors";
+import { DiagnosticoCreateSchema, DiagnosticoUpdateSchema } from "@schemas";
 
 export const diagnosticoService = {
   async listarPorPlano(planoId: string) {
-    return diagnosticoRepository.listarPorPlano(planoId);
+    return diagnosticoRepository.findByPlano(planoId);
   },
 
-  async obterPorId(id: string) {
-    const diagnostico = await diagnosticoRepository.buscarPorId(id);
-    if (!diagnostico) throw new Error("Diagnóstico não encontrado");
+  async buscarPorId(id: string) {
+    const diagnostico = await diagnosticoRepository.findById(id);
+    if (!diagnostico) throw new NotFoundError("Diagnóstico não encontrado");
     return diagnostico;
   },
 
   async criar(body: unknown) {
-    const parsed = DiagnosticoCreateSchema.parse(body);
-    return diagnosticoRepository.criar(parsed);
+    const parsed = DiagnosticoCreateSchema.safeParse(body);
+    if (!parsed.success) {
+      throw new ValidationError(
+        parsed.error.issues.map((e) => e.message).join(", ")
+      );
+    }
+
+    const diagnostico = diagnosticoRepository.create(parsed.data);
+    return diagnostico;
   },
 
   async atualizar(id: string, body: unknown) {
-    const parsed = DiagnosticoUpdateSchema.parse(body);
-    return diagnosticoRepository.atualizar(id, parsed);
+    const parsed = DiagnosticoUpdateSchema.safeParse(body);
+
+    if (!parsed.success) {
+      throw new ValidationError(
+        parsed.error.issues.map((e) => e.message).join(", ")
+      );
+    }
+
+    const diagnostico = await diagnosticoRepository.update(id, parsed.data);
+    if (!diagnostico) throw new NotFoundError("Diagnóstico não encontrado");
+
+    return diagnostico;
   },
 
   async excluir(id: string) {
-    await diagnosticoRepository.excluir(id);
+    const ok = await diagnosticoRepository.delete(id);
+    if (!ok) throw new NotFoundError("Diagnóstico não encontrado");
   },
 };

@@ -1,6 +1,6 @@
+import { AreaIndicadorEnum } from "@schemas";
 import { indicadorService } from "@/domain/services/indicadorService";
 import { handleError } from "@/infra/errors";
-import { AreaIndicador } from "@/types/indicador";
 
 /**
  * GET /api/indicadores
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const areaParam = searchParams.get("area");
 
-    const area = (areaParam as AreaIndicador) ?? undefined;
+    const area = (areaParam as AreaIndicadorEnum) ?? undefined;
 
     const indicadores = await indicadorService.listarTodos(area);
     return Response.json(indicadores, { status: 200 });

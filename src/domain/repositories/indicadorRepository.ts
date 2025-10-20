@@ -1,12 +1,13 @@
-import { db } from "@/infra/db";
-import { Indicador, AreaIndicador } from "@/types/indicador";
+import { db } from "@infra/db";
+import { Indicador } from "@/types";
+import { AreaIndicadorEnum } from "@schemas";
 
 export const indicadorRepository = {
   async findAll(area?: string): Promise<Indicador[]> {
     let query = db.selectFrom("indicador").selectAll();
 
     if (area) {
-      query = query.where("area", "=", area.toUpperCase() as AreaIndicador);
+      query = query.where("area", "=", area.toUpperCase() as AreaIndicadorEnum);
     }
 
     return query.execute();
