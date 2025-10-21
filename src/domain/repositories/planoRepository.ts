@@ -1,13 +1,14 @@
-import { Plano, NovoPlano, AtualizaPlano } from "@/types";
-import { db } from "@infra/db";
+import { NovoPlano, AtualizaPlano } from "@/types";
+import { DB, db } from "@infra/db";
+import { Kysely } from "kysely";
 
 export const planoRepository = {
-  async findAll(): Promise<Plano[]> {
-    return db.selectFrom("plano").selectAll().execute();
+  async findAll(trx: Kysely<DB> = db) {
+    return trx.selectFrom("plano").selectAll().execute();
   },
 
-  async findById(id: string): Promise<Plano | null> {
-    const row = await db
+  async findById(id: string, trx: Kysely<DB> = db) {
+    const row = await trx
       .selectFrom("plano")
       .selectAll()
       .where("id", "=", id)
@@ -15,8 +16,8 @@ export const planoRepository = {
     return row ?? null;
   },
 
-  async create(data: NovoPlano): Promise<Plano> {
-    const row = await db
+  async create(data: NovoPlano, trx: Kysely<DB> = db) {
+    const row = await trx
       .insertInto("plano")
       .values({
         titulo: data.titulo,
@@ -28,8 +29,8 @@ export const planoRepository = {
     return row;
   },
 
-  async update(id: string, data: AtualizaPlano): Promise<Plano | null> {
-    const row = await db
+  async update(id: string, data: AtualizaPlano, trx: Kysely<DB> = db) {
+    const row = await trx
       .updateTable("plano")
       .set({
         titulo: data.titulo ?? undefined,
@@ -42,8 +43,8 @@ export const planoRepository = {
     return row ?? null;
   },
 
-  async remove(id: string): Promise<boolean> {
-    const res = await db
+  async remove(id: string, trx: Kysely<DB> = db) {
+    const res = await trx
       .deleteFrom("plano")
       .where("id", "=", id)
       .executeTakeFirst();

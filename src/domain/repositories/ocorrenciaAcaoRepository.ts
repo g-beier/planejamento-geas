@@ -1,50 +1,50 @@
-import { DB, db } from "@/infra/db";
+import { db, DB } from "@/infra/db";
 import { NotFoundError } from "@/infra/errors";
-import { AtualizaAcao, NovoAcao } from "@/types";
+import { AtualizaOcorrenciaAcao, NovoOcorrenciaAcao } from "@types";
 import { Kysely } from "kysely";
 
-export const acaoRepository = {
-  async findByPlano(planoId: string, trx: Kysely<DB> = db) {
+export const ocorrenciaAcaoRepository = {
+  async findByAcao(acao_id: string, trx: Kysely<DB> = db) {
     return trx
-      .selectFrom("acao")
+      .selectFrom("ocorrencia_acao")
       .selectAll()
-      .where("plano_id", "=", planoId)
+      .where("acao_id", "=", acao_id)
       .execute();
   },
 
   async findById(id: string, trx: Kysely<DB> = db) {
-    const acao = await trx
-      .selectFrom("acao")
+    const ocorrencia = await trx
+      .selectFrom("ocorrencia_acao")
       .selectAll()
       .where("id", "=", id)
       .executeTakeFirst();
-    if (!acao) throw new NotFoundError("Ação não encontrada");
-    return acao;
+    if (!ocorrencia) throw new NotFoundError("Ocorrência não encontrada.");
   },
 
-  async create(data: NovoAcao, trx: Kysely<DB> = db) {
+  async create(data: NovoOcorrenciaAcao, trx: Kysely<DB> = db) {
     return trx
-      .insertInto("acao")
+      .insertInto("ocorrencia_acao")
       .values(data)
       .returningAll()
       .executeTakeFirstOrThrow();
   },
 
-  async update(id: string, data: AtualizaAcao, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaOcorrenciaAcao, trx: Kysely<DB> = db) {
     const result = await trx
-      .updateTable("acao")
+      .updateTable("ocorrencia_acao")
       .set(data)
       .where("id", "=", id)
       .returningAll()
       .executeTakeFirst();
     if (!result)
-      throw new NotFoundError("Ação não encontrada para atualização");
+      throw new NotFoundError("Ocorrência não encontrada para atualização.");
+
     return result;
   },
 
   async delete(id: string, trx: Kysely<DB> = db) {
     const res = await trx
-      .deleteFrom("acao")
+      .deleteFrom("ocorrencia_acao")
       .where("id", "=", id)
       .executeTakeFirst();
 

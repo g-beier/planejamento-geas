@@ -3,3 +3,4 @@ export * from "./diagnostico";
 export * from "./indicador";
 export * from "./plano";
 export * from "./responsavel";
+export * from "./ocorrenciaAcao";

@@ -8,3 +8,13 @@ export const MetaSchema = z.object({
   unidade: z.string().optional(),
   prazo: z.iso.date().optional(),
 });
+
+export const MetaCreateSchema = z.object({
+  diagnostico_id: z.uuid(),
+  descricao: z.string(),
+  valor_alvo: z.string().optional(),
+  unidade: z.string().optional(),
+  prazo: z.iso.date().optional(),
+});
+
+export const MetaUpdateSchema = MetaCreateSchema.partial();

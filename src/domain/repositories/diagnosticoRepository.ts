@@ -1,9 +1,10 @@
-import { db } from "@/infra/db";
-import { AtualizaDiagnostico, Diagnostico, NovoDiagnostico } from "@/types";
+import { DB, db } from "@/infra/db";
+import { AtualizaDiagnostico, NovoDiagnostico } from "@/types";
+import { Kysely } from "kysely";
 
 export const diagnosticoRepository = {
-  async findByPlano(planoId: string): Promise<Diagnostico[]> {
-    return db
+  async findByPlano(planoId: string, trx: Kysely<DB> = db) {
+    return trx
       .selectFrom("diagnostico")
       .selectAll()
       .where("plano_id", "=", planoId)
@@ -11,16 +12,16 @@ export const diagnosticoRepository = {
       .execute();
   },
 
-  async findById(id: string): Promise<Diagnostico | undefined> {
-    return db
+  async findById(id: string, trx: Kysely<DB> = db) {
+    return trx
       .selectFrom("diagnostico")
       .selectAll()
       .where("id", "=", id)
       .executeTakeFirst();
   },
 
-  async create(data: NovoDiagnostico): Promise<Diagnostico> {
-    const [novo] = await db
+  async create(data: NovoDiagnostico, trx: Kysely<DB> = db) {
+    const [novo] = await trx
       .insertInto("diagnostico")
       .values(data)
       .returningAll()
@@ -28,8 +29,8 @@ export const diagnosticoRepository = {
     return novo;
   },
 
-  async update(id: string, data: AtualizaDiagnostico): Promise<Diagnostico> {
-    const [atualizado] = await db
+  async update(id: string, data: AtualizaDiagnostico, trx: Kysely<DB> = db) {
+    const [atualizado] = await trx
       .updateTable("diagnostico")
       .set(data)
       .where("id", "=", id)
@@ -38,8 +39,8 @@ export const diagnosticoRepository = {
     return atualizado;
   },
 
-  async delete(id: string): Promise<boolean> {
-    const res = await db
+  async delete(id: string, trx: Kysely<DB> = db) {
+    const res = await trx
       .deleteFrom("diagnostico")
       .where("id", "=", id)
       .executeTakeFirst();
