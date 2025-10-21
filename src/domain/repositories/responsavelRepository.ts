@@ -1,15 +1,11 @@
-import { DB, db } from "@/infra/db";
+import { db, DBConnection } from "@/infra/db";
 import { Responsavel, NovoResponsavel, AtualizaResponsavel } from "@types";
-import { Kysely } from "kysely";
 
-export const responsavelRepository = {
-  async findAll(trx: Kysely<DB> = db) {
+export const responsavelRepository = (trx: DBConnection = db) => ({
+  async findAll() {
     return trx.selectFrom("responsavel").selectAll().execute();
   },
-  async findById(
-    id: string,
-    trx: Kysely<DB> = db
-  ): Promise<Responsavel | null> {
+  async findById(id: string): Promise<Responsavel | null> {
     const row = await trx
       .selectFrom("responsavel")
       .selectAll()
@@ -17,7 +13,7 @@ export const responsavelRepository = {
       .executeTakeFirst();
     return row ?? null;
   },
-  async create(data: NovoResponsavel, trx: Kysely<DB> = db) {
+  async create(data: NovoResponsavel) {
     const row = await trx
       .insertInto("responsavel")
       .values({
@@ -28,7 +24,7 @@ export const responsavelRepository = {
       .executeTakeFirstOrThrow();
     return row;
   },
-  async update(id: string, data: AtualizaResponsavel, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaResponsavel) {
     const row = await trx
       .updateTable("responsavel")
       .set({
@@ -39,7 +35,7 @@ export const responsavelRepository = {
       .executeTakeFirstOrThrow();
     return row;
   },
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("responsavel")
       .where("id", "=", id)
@@ -51,4 +47,4 @@ export const responsavelRepository = {
         : Number(res.numDeletedRows ?? 0);
     return count > 0;
   },
-};
+});

@@ -31,16 +31,26 @@ describe("acaoService", () => {
 
   const id = crypto.randomUUID();
 
+  const mockFindByPlano = jest.fn();
+  // const mockCreate = jest.fn();
+  // const mockFindById = jest.fn();
+  // const mockUpdate = jest.fn();
+  // const mockDelete = jest.fn();
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    // jest.clearAllMocks();
+
+    (acaoRepository as jest.Mock).mockReturnValue({
+      findByPlano: mockFindByPlano,
+    });
   });
 
   describe("listarPorPlano", () => {
     it("deve retornar todas as ações associadas ao plano", async () => {
-      (acaoRepository.findByPlano as jest.Mock).mockResolvedValue(mockAcoes);
+      mockFindByPlano.mockResolvedValue(mockAcoes);
 
-      const result = await acaoService.listarPorPlano(id);
-      expect(acaoRepository.findByPlano).toHaveBeenCalledWith(id);
+      const result = await acaoService().listarPorPlano(id);
+      expect(mockFindByPlano).toHaveBeenCalledWith(id);
       expect(result).toEqual(mockAcoes);
     });
   });

@@ -1,13 +1,12 @@
 import { NovoPlano, AtualizaPlano } from "@/types";
-import { DB, db } from "@infra/db";
-import { Kysely } from "kysely";
+import { db, DBConnection } from "@infra/db";
 
-export const planoRepository = {
-  async findAll(trx: Kysely<DB> = db) {
+export const planoRepository = (trx: DBConnection = db) => ({
+  async findAll() {
     return trx.selectFrom("plano").selectAll().execute();
   },
 
-  async findById(id: string, trx: Kysely<DB> = db) {
+  async findById(id: string) {
     const row = await trx
       .selectFrom("plano")
       .selectAll()
@@ -16,7 +15,7 @@ export const planoRepository = {
     return row ?? null;
   },
 
-  async create(data: NovoPlano, trx: Kysely<DB> = db) {
+  async create(data: NovoPlano) {
     const row = await trx
       .insertInto("plano")
       .values({
@@ -29,7 +28,7 @@ export const planoRepository = {
     return row;
   },
 
-  async update(id: string, data: AtualizaPlano, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaPlano) {
     const row = await trx
       .updateTable("plano")
       .set({
@@ -43,7 +42,7 @@ export const planoRepository = {
     return row ?? null;
   },
 
-  async remove(id: string, trx: Kysely<DB> = db) {
+  async remove(id: string) {
     const res = await trx
       .deleteFrom("plano")
       .where("id", "=", id)
@@ -55,4 +54,4 @@ export const planoRepository = {
         : Number(res.numDeletedRows ?? 0);
     return count > 0;
   },
-};
+});

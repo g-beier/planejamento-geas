@@ -1,8 +1,7 @@
-import { Kysely } from "kysely";
-import { DB, db } from "@/infra/db";
+import { db, DBConnection } from "@/infra/db";
 
-export const acaoDiagnosticoRepository = {
-  async findAllByAcaoId(acao_id: string, trx: Kysely<DB> = db) {
+export const acaoDiagnosticoRepository = (trx: DBConnection = db) => ({
+  async findAllByAcaoId(acao_id: string) {
     return trx
       .selectFrom("acao_diagnostico")
       .selectAll()
@@ -10,7 +9,7 @@ export const acaoDiagnosticoRepository = {
       .execute();
   },
 
-  async findAllByDiagnosticoId(diagnostico_id: string, trx: Kysely<DB> = db) {
+  async findAllByDiagnosticoId(diagnostico_id: string) {
     return trx
       .selectFrom("acao_diagnostico")
       .selectAll()
@@ -18,11 +17,7 @@ export const acaoDiagnosticoRepository = {
       .execute();
   },
 
-  async findByAcaoAndDiagnosticoId(
-    acao_id: string,
-    diagnostico_id: string,
-    trx: Kysely<DB> = db
-  ) {
+  async findByAcaoAndDiagnosticoId(acao_id: string, diagnostico_id: string) {
     return trx
       .selectFrom("acao_diagnostico")
       .selectAll()
@@ -31,7 +26,7 @@ export const acaoDiagnosticoRepository = {
       .executeTakeFirst();
   },
 
-  async create(acao_id: string, diagnostico_id: string, trx: Kysely<DB> = db) {
+  async create(acao_id: string, diagnostico_id: string) {
     return trx
       .insertInto("acao_diagnostico")
       .values({ diagnostico_id, acao_id })
@@ -39,7 +34,7 @@ export const acaoDiagnosticoRepository = {
       .executeTakeFirstOrThrow();
   },
 
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("acao_diagnostico")
       .where("id", "=", id)
@@ -52,4 +47,4 @@ export const acaoDiagnosticoRepository = {
 
     return count > 0;
   },
-};
+});

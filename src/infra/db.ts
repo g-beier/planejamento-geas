@@ -1,4 +1,4 @@
-import { Kysely, PostgresDialect, Generated } from "kysely";
+import { Kysely, PostgresDialect, Generated, Transaction } from "kysely";
 import { Pool } from "pg";
 
 /**
@@ -110,3 +110,5 @@ export const db = new Kysely<DB>({
     }),
   }),
 });
+
+export type DBConnection = Kysely<DB> | Transaction<DB>;

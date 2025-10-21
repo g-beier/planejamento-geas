@@ -1,8 +1,7 @@
-import { db, DB } from "@/infra/db";
-import { Kysely } from "kysely";
+import { db, DBConnection } from "@/infra/db";
 
-export const acaoResponsavelRepository = {
-  async findAllByAcao(acao_id: string, trx: Kysely<DB> = db) {
+export const acaoResponsavelRepository = (trx: DBConnection = db) => ({
+  async findAllByAcao(acao_id: string) {
     return trx
       .selectFrom("acao_responsavel")
       .selectAll()
@@ -10,11 +9,7 @@ export const acaoResponsavelRepository = {
       .execute();
   },
 
-  async findByAcaoAndResponsavelId(
-    acao_id: string,
-    responsavel_id: string,
-    trx: Kysely<DB> = db
-  ) {
+  async findByAcaoAndResponsavelId(acao_id: string, responsavel_id: string) {
     return trx
       .selectFrom("acao_responsavel")
       .selectAll()
@@ -23,14 +18,14 @@ export const acaoResponsavelRepository = {
       .executeTakeFirst();
   },
 
-  async create(acao_id: string, responsavel_id: string, trx: Kysely<DB> = db) {
+  async create(acao_id: string, responsavel_id: string) {
     return trx
       .insertInto("acao_responsavel")
       .values({ acao_id, responsavel_id })
       .executeTakeFirstOrThrow();
   },
 
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("acao_responsavel")
       .where("id", "=", id)
@@ -43,4 +38,4 @@ export const acaoResponsavelRepository = {
 
     return count > 0;
   },
-};
+});

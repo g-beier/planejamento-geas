@@ -1,6 +1,6 @@
 import { indicadorRepository } from "@repositories";
 import { db } from "@infra/db";
-import { AreaIndicador } from "@types";
+import { AreaIndicadorEnum } from "@/domain/schemas";
 
 jest.mock("@infra/db", () => ({
   db: {
@@ -15,7 +15,7 @@ describe("indicadorRepository", () => {
   const mockSelectAll = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    // jest.clearAllMocks();
 
     (db.selectFrom as jest.Mock).mockReturnValue({
       selectAll: mockSelectAll.mockReturnThis(),
@@ -34,7 +34,7 @@ describe("indicadorRepository", () => {
 
       mockExecute.mockResolvedValue(mockIndicadores);
 
-      const result = await indicadorRepository.findAll();
+      const result = await indicadorRepository().findAll();
 
       expect(db.selectFrom).toHaveBeenCalledWith("indicador");
       expect(mockExecute).toHaveBeenCalled();
@@ -50,13 +50,13 @@ describe("indicadorRepository", () => {
 
       mockExecute.mockResolvedValue(mockIndicadores);
 
-      const result = await indicadorRepository.findAll(area);
+      const result = await indicadorRepository().findAll(area);
 
       expect(db.selectFrom).toHaveBeenCalledWith("indicador");
       expect(mockWhere).toHaveBeenCalledWith(
         "area",
         "=",
-        area.toUpperCase() as AreaIndicador
+        area.toUpperCase() as AreaIndicadorEnum
       );
       expect(mockExecute).toHaveBeenCalled();
       expect(result).toEqual(mockIndicadores);
@@ -73,7 +73,7 @@ describe("indicadorRepository", () => {
 
       mockExecuteTakeFirst.mockResolvedValue(mockIndicador);
 
-      const result = await indicadorRepository.findById("001");
+      const result = await indicadorRepository().findById("001");
 
       expect(db.selectFrom).toHaveBeenCalledWith("indicador");
       expect(mockWhere).toHaveBeenCalledWith("id", "=", "001");
@@ -83,7 +83,7 @@ describe("indicadorRepository", () => {
     it("deve retornar null quando o indicador não for encontrado", async () => {
       mockExecuteTakeFirst.mockResolvedValue(undefined);
 
-      const result = await indicadorRepository.findById("999");
+      const result = await indicadorRepository().findById("999");
 
       expect(db.selectFrom).toHaveBeenCalledWith("indicador");
       expect(mockWhere).toHaveBeenCalledWith("id", "=", "999");

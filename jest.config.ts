@@ -1,4 +1,7 @@
 import type { Config } from "jest";
+import nextJest from "next/jest";
+
+const createJestConfig = nextJest({ dir: "./" });
 
 const config: Config = {
   preset: "ts-jest",
@@ -32,6 +35,9 @@ const config: Config = {
     "!src/tests/**/*.test.ts",
     "!src/**/index.ts",
   ],
+  transform: {
+    "\\.[jt]sx$": "ts-jest",
+  },
 };
 
-export default config;
+export default createJestConfig(config);

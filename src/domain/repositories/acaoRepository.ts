@@ -1,10 +1,9 @@
-import { DB, db } from "@/infra/db";
+import { db, DBConnection } from "@/infra/db";
 import { NotFoundError } from "@/infra/errors";
 import { AtualizaAcao, NovoAcao } from "@/types";
-import { Kysely } from "kysely";
 
-export const acaoRepository = {
-  async findByPlano(planoId: string, trx: Kysely<DB> = db) {
+export const acaoRepository = (trx: DBConnection = db) => ({
+  async findByPlano(planoId: string) {
     return trx
       .selectFrom("acao")
       .selectAll()
@@ -12,7 +11,7 @@ export const acaoRepository = {
       .execute();
   },
 
-  async findById(id: string, trx: Kysely<DB> = db) {
+  async findById(id: string) {
     const acao = await trx
       .selectFrom("acao")
       .selectAll()
@@ -22,7 +21,7 @@ export const acaoRepository = {
     return acao;
   },
 
-  async create(data: NovoAcao, trx: Kysely<DB> = db) {
+  async create(data: NovoAcao) {
     return trx
       .insertInto("acao")
       .values(data)
@@ -30,7 +29,7 @@ export const acaoRepository = {
       .executeTakeFirstOrThrow();
   },
 
-  async update(id: string, data: AtualizaAcao, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaAcao) {
     const result = await trx
       .updateTable("acao")
       .set(data)
@@ -42,7 +41,7 @@ export const acaoRepository = {
     return result;
   },
 
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("acao")
       .where("id", "=", id)
@@ -55,4 +54,4 @@ export const acaoRepository = {
 
     return count > 0;
   },
-};
+});

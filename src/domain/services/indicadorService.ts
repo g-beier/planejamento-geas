@@ -1,15 +1,20 @@
 import { indicadorRepository } from "@repositories";
 import { NotFoundError } from "@infra/errors";
-import { AreaIndicadorEnum } from "@schemas";
+import { AreaIndicadorEnum, IndicadorSchema } from "@schemas";
+import { DBConnection, db } from "@/infra/db";
 
-export const indicadorService = {
-  async listarTodos(area?: AreaIndicadorEnum) {
-    return indicadorRepository.findAll(area);
-  },
+export const indicadorService = (conn: DBConnection = db) => {
+  const indicadorRepo = indicadorRepository(conn);
 
-  async buscarPorId(id: string) {
-    const indicador = await indicadorRepository.findById(id);
-    if (!indicador) throw new NotFoundError("Indicador não encontrado");
-    return indicador;
-  },
+  return {
+    async listarTodos(area?: AreaIndicadorEnum) {
+      return indicadorRepo.findAll(area);
+    },
+
+    async buscarPorId(id: string) {
+      const indicador = await indicadorRepo.findById(id);
+      if (!indicador) throw new NotFoundError("Indicador não encontrado");
+      return IndicadorSchema.parse(indicador);
+    },
+  };
 };

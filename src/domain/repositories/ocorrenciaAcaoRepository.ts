@@ -1,10 +1,9 @@
-import { db, DB } from "@/infra/db";
+import { db, DBConnection } from "@/infra/db";
 import { NotFoundError } from "@/infra/errors";
 import { AtualizaOcorrenciaAcao, NovoOcorrenciaAcao } from "@types";
-import { Kysely } from "kysely";
 
-export const ocorrenciaAcaoRepository = {
-  async findByAcao(acao_id: string, trx: Kysely<DB> = db) {
+export const ocorrenciaAcaoRepository = (trx: DBConnection = db) => ({
+  async findByAcao(acao_id: string) {
     return trx
       .selectFrom("ocorrencia_acao")
       .selectAll()
@@ -12,7 +11,7 @@ export const ocorrenciaAcaoRepository = {
       .execute();
   },
 
-  async findById(id: string, trx: Kysely<DB> = db) {
+  async findById(id: string) {
     const ocorrencia = await trx
       .selectFrom("ocorrencia_acao")
       .selectAll()
@@ -21,7 +20,7 @@ export const ocorrenciaAcaoRepository = {
     if (!ocorrencia) throw new NotFoundError("Ocorrência não encontrada.");
   },
 
-  async create(data: NovoOcorrenciaAcao, trx: Kysely<DB> = db) {
+  async create(data: NovoOcorrenciaAcao) {
     return trx
       .insertInto("ocorrencia_acao")
       .values(data)
@@ -29,7 +28,7 @@ export const ocorrenciaAcaoRepository = {
       .executeTakeFirstOrThrow();
   },
 
-  async update(id: string, data: AtualizaOcorrenciaAcao, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaOcorrenciaAcao) {
     const result = await trx
       .updateTable("ocorrencia_acao")
       .set(data)
@@ -42,7 +41,7 @@ export const ocorrenciaAcaoRepository = {
     return result;
   },
 
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("ocorrencia_acao")
       .where("id", "=", id)
@@ -55,4 +54,4 @@ export const ocorrenciaAcaoRepository = {
 
     return count > 0;
   },
-};
+});

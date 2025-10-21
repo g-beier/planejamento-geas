@@ -21,40 +21,54 @@ describe("planoService", () => {
     },
   ];
 
+  const mockFindAll = jest.fn();
+  const mockFindById = jest.fn();
+  const mockCreate = jest.fn();
+  const mockUpdate = jest.fn();
+  const mockRemove = jest.fn();
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    // jest.clearAllMocks();
+
+    (planoRepository as jest.Mock).mockReturnValue({
+      findAll: mockFindAll,
+      findById: mockFindById,
+      create: mockCreate,
+      update: mockUpdate,
+      remove: mockRemove,
+    });
   });
   describe("listarTodos", () => {
     it("deve retornar todos os planos", async () => {
-      (planoRepository.findAll as jest.Mock).mockResolvedValue(mockPlanos);
+      mockFindAll.mockResolvedValue(mockPlanos);
 
-      const result = await planoService.listarTodos();
+      const result = await planoService().listarTodos();
 
       expect(result).toEqual(mockPlanos);
-      expect(planoRepository.findAll).toHaveBeenCalled();
+      expect(mockFindAll).toHaveBeenCalled();
     });
   });
 
   describe("buscarPorId", () => {
     it("deve retornar o plano quando encontrado", async () => {
-      (planoRepository.findById as jest.Mock).mockResolvedValue(mockPlanos[0]);
+      mockFindById.mockResolvedValue(mockPlanos[0]);
 
-      const result = await planoService.buscarPorId("1");
+      const result = await planoService().buscarPorId("1");
 
       expect(result).toEqual(mockPlanos[0]);
-      expect(planoRepository.findById).toHaveBeenCalledWith("1");
+      expect(mockFindById).toHaveBeenCalledWith("1");
     });
     it("deve lançar NotFoundError quando o plano não existir", async () => {
-      (planoRepository.findById as jest.Mock).mockResolvedValue(null);
+      mockFindById.mockResolvedValue(null);
 
-      expect(planoService.buscarPorId("1")).rejects.toThrow(NotFoundError);
-      expect(planoRepository.findById).toHaveBeenCalledWith("1");
+      expect(planoService().buscarPorId("1")).rejects.toThrow(NotFoundError);
+      expect(mockFindById).toHaveBeenCalledWith("1");
     });
   });
 
   describe("criar", () => {
     it("deve retornar o plano criado", async () => {
-      (planoRepository.create as jest.Mock).mockResolvedValue(mockPlanos[0]);
+      mockCreate.mockResolvedValue(mockPlanos[0]);
 
       const dados = {
         titulo: "Plano do Grupo",
@@ -62,61 +76,61 @@ describe("planoService", () => {
         prazo_final: "2025-12-31",
       };
 
-      const result = await planoService.criar(dados);
+      const result = await planoService().criar(dados);
 
       expect(result).toEqual(mockPlanos[0]);
-      expect(planoRepository.create).toHaveBeenCalledWith(dados);
+      expect(mockCreate).toHaveBeenCalledWith(dados);
     });
     it("deve lançar ValidationError se campos obrigatórios não estiverem preenchidos", async () => {
-      (planoRepository.create as jest.Mock).mockResolvedValue(mockPlanos[0]);
+      mockCreate.mockResolvedValue(mockPlanos[0]);
 
       const dados = {
         titulo: "Plano do Grupo",
         prazo_final: "2025-12-31",
       };
 
-      expect(planoService.criar(dados)).rejects.toThrow(ValidationError);
-      expect(planoRepository.create).not.toHaveBeenCalled();
+      expect(planoService().criar(dados)).rejects.toThrow(ValidationError);
+      expect(mockCreate).not.toHaveBeenCalled();
     });
   });
 
   describe("atualizar", () => {
     it("deve retornar o plano atualizado", async () => {
-      (planoRepository.update as jest.Mock).mockResolvedValue(mockPlanos[0]);
+      mockUpdate.mockResolvedValue(mockPlanos[0]);
 
       const id = crypto.randomUUID();
-      const result = await planoService.atualizar(id, { ano: 2000 });
+      const result = await planoService().atualizar(id, { ano: 2000 });
 
       expect(result).toEqual(mockPlanos[0]);
-      expect(planoRepository.update).toHaveBeenCalledWith(id, { ano: 2000 });
+      expect(mockUpdate).toHaveBeenCalledWith(id, { ano: 2000 });
     });
     it("deve lançar NotFoundError quando o plano não existir", () => {
-      (planoRepository.update as jest.Mock).mockResolvedValue(null);
+      mockUpdate.mockResolvedValue(null);
 
       const id = crypto.randomUUID();
-      expect(planoService.atualizar(id, { ano: 2000 })).rejects.toThrow(
+      expect(planoService().atualizar(id, { ano: 2000 })).rejects.toThrow(
         NotFoundError
       );
-      expect(planoRepository.update).toHaveBeenCalledWith(id, { ano: 2000 });
+      expect(mockUpdate).toHaveBeenCalledWith(id, { ano: 2000 });
     });
   });
 
   describe("remover", () => {
     it("deve chamar o repositório com o ID correto", async () => {
-      (planoRepository.remove as jest.Mock).mockResolvedValue(true);
+      mockRemove.mockResolvedValue(true);
 
       const id = crypto.randomUUID();
-      await planoService.remover(id);
+      await planoService().remover(id);
 
-      expect(planoRepository.remove).toHaveBeenCalledWith(id);
+      expect(mockRemove).toHaveBeenCalledWith(id);
     });
     it("deve lançar NotFoundError quando o plano não existir", () => {
-      (planoRepository.remove as jest.Mock).mockResolvedValue(false);
+      mockRemove.mockResolvedValue(false);
 
       const id = crypto.randomUUID();
 
-      expect(planoService.remover(id)).rejects.toThrow(NotFoundError);
-      expect(planoRepository.remove).toHaveBeenCalledWith(id);
+      expect(planoService().remover(id)).rejects.toThrow(NotFoundError);
+      expect(mockRemove).toHaveBeenCalledWith(id);
     });
   });
 });

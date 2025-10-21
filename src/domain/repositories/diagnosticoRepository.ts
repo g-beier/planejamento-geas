@@ -1,9 +1,8 @@
-import { DB, db } from "@/infra/db";
+import { db, DBConnection } from "@/infra/db";
 import { AtualizaDiagnostico, NovoDiagnostico } from "@/types";
-import { Kysely } from "kysely";
 
-export const diagnosticoRepository = {
-  async findByPlano(planoId: string, trx: Kysely<DB> = db) {
+export const diagnosticoRepository = (trx: DBConnection = db) => ({
+  async findByPlano(planoId: string) {
     return trx
       .selectFrom("diagnostico")
       .selectAll()
@@ -12,7 +11,7 @@ export const diagnosticoRepository = {
       .execute();
   },
 
-  async findById(id: string, trx: Kysely<DB> = db) {
+  async findById(id: string) {
     return trx
       .selectFrom("diagnostico")
       .selectAll()
@@ -20,7 +19,7 @@ export const diagnosticoRepository = {
       .executeTakeFirst();
   },
 
-  async create(data: NovoDiagnostico, trx: Kysely<DB> = db) {
+  async create(data: NovoDiagnostico) {
     const [novo] = await trx
       .insertInto("diagnostico")
       .values(data)
@@ -29,7 +28,7 @@ export const diagnosticoRepository = {
     return novo;
   },
 
-  async update(id: string, data: AtualizaDiagnostico, trx: Kysely<DB> = db) {
+  async update(id: string, data: AtualizaDiagnostico) {
     const [atualizado] = await trx
       .updateTable("diagnostico")
       .set(data)
@@ -39,7 +38,7 @@ export const diagnosticoRepository = {
     return atualizado;
   },
 
-  async delete(id: string, trx: Kysely<DB> = db) {
+  async delete(id: string) {
     const res = await trx
       .deleteFrom("diagnostico")
       .where("id", "=", id)
@@ -52,4 +51,4 @@ export const diagnosticoRepository = {
 
     return count > 0;
   },
-};
+});

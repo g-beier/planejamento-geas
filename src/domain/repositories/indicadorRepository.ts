@@ -1,9 +1,8 @@
-import { DB, db } from "@infra/db";
+import { db, DBConnection } from "@infra/db";
 import { AreaIndicadorEnum } from "@schemas";
-import { Kysely } from "kysely";
 
-export const indicadorRepository = {
-  async findAll(area?: string, trx: Kysely<DB> = db) {
+export const indicadorRepository = (trx: DBConnection = db) => ({
+  async findAll(area?: string) {
     let query = trx.selectFrom("indicador").selectAll();
 
     if (area) {
@@ -13,7 +12,7 @@ export const indicadorRepository = {
     return query.execute();
   },
 
-  async findById(id: string, trx: Kysely<DB> = db) {
+  async findById(id: string) {
     const indicador = await trx
       .selectFrom("indicador")
       .selectAll()
@@ -22,4 +21,4 @@ export const indicadorRepository = {
 
     return indicador ?? null;
   },
-};
+});

@@ -1,6 +1,6 @@
 import { planoRepository } from "@repositories";
 import { db } from "@infra/db";
-import { Plano, PlanoUpdateInput } from "@types";
+import { NovoPlano, Plano } from "@types";
 
 jest.mock("@infra/db", () => ({
   db: {
@@ -22,7 +22,7 @@ describe("planoRepository", () => {
   const mockSet = jest.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    // jest.clearAllMocks();
 
     (db.selectFrom as jest.Mock).mockReturnValue({
       selectAll: mockSelectAll.mockReturnThis(),
@@ -71,7 +71,7 @@ describe("planoRepository", () => {
     it("deve retornar todos os planos", async () => {
       mockExecute.mockResolvedValue(mockPlanos);
 
-      const result = await planoRepository.findAll();
+      const result = await planoRepository().findAll();
 
       expect(db.selectFrom).toHaveBeenCalledWith("plano");
       expect(mockExecute).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe("planoRepository", () => {
     it("deve retornar um plano quando encontrado", async () => {
       mockExecuteTakeFirst.mockResolvedValue(mockPlanos[0]);
 
-      const result = await planoRepository.findById(id);
+      const result = await planoRepository().findById(id);
 
       expect(db.selectFrom).toHaveBeenCalledWith("plano");
       expect(mockExecuteTakeFirst).toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe("planoRepository", () => {
     it("deve retornar null quando o plano não for encontrado", async () => {
       mockExecuteTakeFirst.mockResolvedValue(undefined);
 
-      const result = await planoRepository.findById(id);
+      const result = await planoRepository().findById(id);
 
       expect(db.selectFrom).toHaveBeenCalledWith("plano");
       expect(mockExecuteTakeFirst).toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe("planoRepository", () => {
         criado_em: "2025-10-15",
       });
 
-      const result = await planoRepository.create(mockPlano);
+      const result = await planoRepository().create(mockPlano);
 
       expect(db.insertInto).toHaveBeenCalledWith("plano");
       expect(mockValues).toHaveBeenCalledWith(mockPlano);
@@ -123,7 +123,7 @@ describe("planoRepository", () => {
     it("deve lançar um erro NoResultError em caso de falha", async () => {
       mockExecuteTakeFirstOrThrow.mockRejectedValue(new Error());
 
-      expect(planoRepository.create(mockPlano as Plano)).rejects.toThrow();
+      expect(planoRepository().create(mockPlano as Plano)).rejects.toThrow();
 
       expect(db.insertInto).toHaveBeenCalledWith("plano");
       expect(mockValues).toHaveBeenCalledWith(mockPlano);
@@ -135,7 +135,7 @@ describe("planoRepository", () => {
     it("deve retornar o plano atualizado, caso exista", async () => {
       mockExecuteTakeFirst.mockResolvedValue(mockPlanos[0]);
 
-      const result = await planoRepository.update(id, mockPlano);
+      const result = await planoRepository().update(id, mockPlano);
 
       expect(db.updateTable).toHaveBeenCalledWith("plano");
       expect(mockSet).toHaveBeenCalledWith(mockPlano);
@@ -146,10 +146,10 @@ describe("planoRepository", () => {
     it("atualizar apenas valores novos", async () => {
       mockExecuteTakeFirst.mockResolvedValue(mockPlanos[0]);
 
-      const result = await planoRepository.update(id, {
+      const result = await planoRepository().update(id, {
         ...mockPlano,
         dadoAleatorioParaTeste: "string",
-      } as Partial<PlanoUpdateInput>);
+      } as NovoPlano);
 
       expect(db.updateTable).toHaveBeenCalledWith("plano");
       expect(mockSet).toHaveBeenCalledWith(mockPlano);
@@ -160,7 +160,7 @@ describe("planoRepository", () => {
     it("deve retornar null, caso não exista", async () => {
       mockExecuteTakeFirst.mockResolvedValue(undefined);
 
-      const result = await planoRepository.update(id, mockPlano);
+      const result = await planoRepository().update(id, mockPlano);
 
       expect(db.updateTable).toHaveBeenCalledWith("plano");
       expect(mockSet).toHaveBeenCalledWith(mockPlano);
@@ -174,7 +174,7 @@ describe("planoRepository", () => {
       mockExecuteTakeFirst.mockResolvedValue({ numDeletedRows: 1 });
 
       const id = crypto.randomUUID();
-      const result = await planoRepository.remove(id);
+      const result = await planoRepository().remove(id);
 
       expect(db.deleteFrom).toHaveBeenCalledWith("plano");
       expect(mockWhere).toHaveBeenCalledWith("id", "=", id);
@@ -186,7 +186,7 @@ describe("planoRepository", () => {
       mockExecuteTakeFirst.mockResolvedValue({ numDeletedRows: 0 });
 
       const id = crypto.randomUUID();
-      const result = await planoRepository.remove(id);
+      const result = await planoRepository().remove(id);
 
       expect(db.deleteFrom).toHaveBeenCalledWith("plano");
       expect(mockWhere).toHaveBeenCalledWith("id", "=", id);
