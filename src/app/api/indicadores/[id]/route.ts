@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    const indicador = await indicadorService.buscarPorId(id);
+    const indicador = await indicadorService().buscarPorId(id);
     return Response.json(indicador, { status: 200 });
   } catch (error) {
     return handleError(error);

@@ -15,13 +15,13 @@ export const planoRepository = (trx: DBConnection = db) => ({
     return row ?? null;
   },
 
-  async create(data: NovoPlano) {
+  async create(data: Omit<NovoPlano, "arquivado">) {
     const row = await trx
       .insertInto("plano")
       .values({
         titulo: data.titulo,
         ano: data.ano,
-        prazo_final: data.prazo_final,
+        arquivado: false,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
@@ -34,7 +34,7 @@ export const planoRepository = (trx: DBConnection = db) => ({
       .set({
         titulo: data.titulo ?? undefined,
         ano: data.ano ?? undefined,
-        prazo_final: data.prazo_final ?? undefined,
+        arquivado: data.arquivado ?? undefined,
       })
       .where("id", "=", id)
       .returningAll()

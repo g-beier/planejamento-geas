@@ -8,7 +8,7 @@ import { handleError } from "@/infra/errors";
  */
 export async function GET(_: Request, { params }: { params: { id: string } }) {
   try {
-    const acao = await acaoService.buscarPorId(params.id);
+    const acao = await acaoService().buscarPorId(params.id);
     return NextResponse.json(acao, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -25,7 +25,7 @@ export async function PUT(
 ) {
   try {
     const data = await request.json();
-    const acao = await acaoService.atualizar(params.id, data);
+    const acao = await acaoService().atualizar(params.id, data);
     return NextResponse.json(acao, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -41,7 +41,7 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const acao = await acaoService.remover(params.id);
+    const acao = await acaoService().remover(params.id);
     return NextResponse.json(acao, { status: 200 });
   } catch (error) {
     return handleError(error);

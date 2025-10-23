@@ -11,8 +11,11 @@ export const diagnosticoService = (conn: DBConnection = db) => {
       return diagnosticoRepo.findByPlano(planoId);
     },
 
-    async buscarPorId(id: string) {
-      const diagnostico = await diagnosticoRepo.findById(id);
+    async buscarPorId(plano_id: string, indicador_id: string) {
+      const diagnostico = await diagnosticoRepo.findById(
+        plano_id,
+        indicador_id
+      );
       if (!diagnostico) throw new NotFoundError("Diagnóstico não encontrado");
       return diagnostico;
     },
@@ -29,7 +32,7 @@ export const diagnosticoService = (conn: DBConnection = db) => {
       return diagnostico;
     },
 
-    async atualizar(id: string, body: unknown) {
+    async atualizar(plano_id: string, indicador_id: string, body: unknown) {
       const parsed = DiagnosticoUpdateSchema.safeParse(body);
 
       if (!parsed.success) {
@@ -38,14 +41,18 @@ export const diagnosticoService = (conn: DBConnection = db) => {
         );
       }
 
-      const diagnostico = await diagnosticoRepo.update(id, parsed.data);
+      const diagnostico = await diagnosticoRepo.update(
+        plano_id,
+        indicador_id,
+        parsed.data
+      );
       if (!diagnostico) throw new NotFoundError("Diagnóstico não encontrado");
 
       return diagnostico;
     },
 
-    async excluir(id: string) {
-      const ok = await diagnosticoRepo.delete(id);
+    async excluir(plano_id: string, indicador_id: string) {
+      const ok = await diagnosticoRepo.delete(plano_id, indicador_id);
       if (!ok) throw new NotFoundError("Diagnóstico não encontrado");
     },
   };

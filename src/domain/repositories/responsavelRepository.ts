@@ -17,8 +17,7 @@ export const responsavelRepository = (trx: DBConnection = db) => ({
     const row = await trx
       .insertInto("responsavel")
       .values({
-        nome_exibicao: data.nome_exibicao,
-        registro: data.registro,
+        nome: data.nome,
       })
       .returningAll()
       .executeTakeFirstOrThrow();
@@ -28,8 +27,7 @@ export const responsavelRepository = (trx: DBConnection = db) => ({
     const row = await trx
       .updateTable("responsavel")
       .set({
-        nome_exibicao: data.nome_exibicao,
-        registro: data.registro,
+        nome: data.nome,
       })
       .returningAll()
       .executeTakeFirstOrThrow();

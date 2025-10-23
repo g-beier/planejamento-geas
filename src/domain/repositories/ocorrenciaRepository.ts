@@ -1,11 +1,11 @@
 import { db, DBConnection } from "@/infra/db";
 import { NotFoundError } from "@/infra/errors";
-import { AtualizaOcorrenciaAcao, NovoOcorrenciaAcao } from "@types";
+import { AtualizaOcorrencia, NovoOcorencia } from "@types";
 
-export const ocorrenciaAcaoRepository = (trx: DBConnection = db) => ({
+export const ocorrenciaRepository = (trx: DBConnection = db) => ({
   async findByAcao(acao_id: string) {
     return trx
-      .selectFrom("ocorrencia_acao")
+      .selectFrom("ocorrencia")
       .selectAll()
       .where("acao_id", "=", acao_id)
       .execute();
@@ -13,24 +13,30 @@ export const ocorrenciaAcaoRepository = (trx: DBConnection = db) => ({
 
   async findById(id: string) {
     const ocorrencia = await trx
-      .selectFrom("ocorrencia_acao")
+      .selectFrom("ocorrencia")
       .selectAll()
       .where("id", "=", id)
       .executeTakeFirst();
     if (!ocorrencia) throw new NotFoundError("Ocorrência não encontrada.");
+    return ocorrencia;
   },
 
-  async create(data: NovoOcorrenciaAcao) {
+  async create(data: NovoOcorencia) {
     return trx
-      .insertInto("ocorrencia_acao")
+      .insertInto("ocorrencia")
       .values(data)
       .returningAll()
       .executeTakeFirstOrThrow();
   },
 
-  async update(id: string, data: AtualizaOcorrenciaAcao) {
+  async bulkCreate(data: NovoOcorencia[]) {
+    if (data.length == 0) return [];
+    return trx.insertInto("ocorrencia").values(data).returningAll().execute();
+  },
+
+  async update(id: string, data: AtualizaOcorrencia) {
     const result = await trx
-      .updateTable("ocorrencia_acao")
+      .updateTable("ocorrencia")
       .set(data)
       .where("id", "=", id)
       .returningAll()
@@ -43,7 +49,7 @@ export const ocorrenciaAcaoRepository = (trx: DBConnection = db) => ({
 
   async delete(id: string) {
     const res = await trx
-      .deleteFrom("ocorrencia_acao")
+      .deleteFrom("ocorrencia")
       .where("id", "=", id)
       .executeTakeFirst();
 

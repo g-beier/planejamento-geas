@@ -25,10 +25,11 @@ export const acaoResponsavelRepository = (trx: DBConnection = db) => ({
       .executeTakeFirstOrThrow();
   },
 
-  async delete(id: string) {
+  async delete(acao_id: string, responsavel_id: string) {
     const res = await trx
       .deleteFrom("acao_responsavel")
-      .where("id", "=", id)
+      .where("responsavel_id", "=", responsavel_id)
+      .where("acao_id", "=", acao_id)
       .executeTakeFirst();
 
     const count =

@@ -1,0 +1,46 @@
+paths:
+  /api/indicadores:
+    get:
+      summary: Listar todos os indicadores
+      tags: [Indicador]
+      description: Retorna todos os indicadores disponíveis, filtrados por area
+      operationId: listarIndicadores
+      parameters:
+        - name: area
+          in: query
+          required: false
+          description: Filtra os indicadores por área.
+          schema:
+            $ref: "#/components/schemas/AreaIndicador"
+      responses:
+        "200":
+          description: Lista retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Indicador"
+
+  /api/indicadores/{id}:
+    get:
+      summary: Buscar indicador por ID
+      tags: [Indicador]
+      description: Retorna um indicador específico pelo seu ID único.
+      operationId: buscarIndicadorPorId
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID único do indicador.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Indicador encontrado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Indicador"
+        "404":
+          description: Indicador não encontrado.

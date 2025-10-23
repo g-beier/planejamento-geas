@@ -7,8 +7,18 @@ jest.mock("@/domain/repositories/indicadorRepository");
 
 describe("indicadorService", () => {
   const mockIndicadores = [
-    { id: "001", pergunta: "Pergunta 1", area: "VALORES" as AreaIndicadorEnum },
-    { id: "002", pergunta: "Pergunta 2", area: "GESTAO" as AreaIndicadorEnum },
+    {
+      id: "001",
+      pergunta: "Pergunta 1",
+      area: "VALORES" as AreaIndicadorEnum,
+      atualizado_em: new Date("2020-10-10").toISOString(),
+    },
+    {
+      id: "002",
+      pergunta: "Pergunta 2",
+      area: "GESTAO" as AreaIndicadorEnum,
+      atualizado_em: new Date("2020-10-10").toISOString(),
+    },
   ];
 
   const mockFindAll = jest.fn();

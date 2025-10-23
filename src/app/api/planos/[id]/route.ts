@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const { id } = await context.params;
-    const plano = await planoService.buscarPorId(id);
+    const plano = await planoService().buscarPorId(id);
     return Response.json(plano, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -29,7 +29,7 @@ export async function PUT(
   try {
     const { id } = await context.params;
     const body = await request.json();
-    const planoAtualizado = await planoService.atualizar(id, body);
+    const planoAtualizado = await planoService().atualizar(id, body);
     return Response.json(planoAtualizado, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -46,7 +46,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await context.params;
-    await planoService.remover(id);
+    await planoService().remover(id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return handleError(error);

@@ -7,7 +7,7 @@ import { handleError } from "@/infra/errors";
  */
 export async function GET() {
   try {
-    const planos = await planoService.listarTodos();
+    const planos = await planoService().listarTodos();
     return Response.json(planos, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -21,7 +21,7 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const plano = await planoService.criar(body);
+    const plano = await planoService().criar(body);
     return Response.json(plano, { status: 201 });
   } catch (error) {
     return handleError(error);

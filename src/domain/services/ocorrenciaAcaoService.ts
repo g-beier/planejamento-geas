@@ -1,16 +1,16 @@
-import { AtualizaOcorrenciaAcao, NovoOcorrenciaAcao } from "@types";
+import { AtualizaOcorrencia, NovoOcorencia } from "@types";
 import {
-  OcorrenciaAcaoCreateSchema,
-  OcorrenciaAcaoSchema,
-  OcorrenciaAcaoUpdateSchema,
+  OcorrenciaSchema,
+  OcorrenciaCreateSchema,
+  OcorrenciaUpdateSchema,
 } from "@schemas";
 import { NotFoundError, ValidationError } from "@infra/errors";
-import { acaoRepository, ocorrenciaAcaoRepository } from "@repositories";
+import { acaoRepository, ocorrenciaRepository } from "@repositories";
 import { DBConnection, db } from "@/infra/db";
 
 export const ocorrenciaAcaoService = (conn: DBConnection = db) => {
   const acaoRepo = acaoRepository(conn);
-  const ocorrenciaAcaoRepo = ocorrenciaAcaoRepository(conn);
+  const ocorrenciaAcaoRepo = ocorrenciaRepository(conn);
 
   return {
     async listarPorAcao(acao_id: string) {
@@ -21,11 +21,11 @@ export const ocorrenciaAcaoService = (conn: DBConnection = db) => {
       const ocorrenciaAcao = ocorrenciaAcaoRepo.findById(id);
       if (!ocorrenciaAcao)
         throw new NotFoundError("Ocorrência não encontrada.");
-      return OcorrenciaAcaoSchema.parse(ocorrenciaAcao);
+      return OcorrenciaSchema.parse(ocorrenciaAcao);
     },
 
-    async criar(data: NovoOcorrenciaAcao) {
-      const parsed = OcorrenciaAcaoCreateSchema.safeParse(data);
+    async criar(data: NovoOcorencia) {
+      const parsed = OcorrenciaCreateSchema.safeParse(data);
       if (!parsed.success) {
         throw new ValidationError(
           parsed.error.issues.map((e) => e.message).join(", ")
@@ -41,8 +41,8 @@ export const ocorrenciaAcaoService = (conn: DBConnection = db) => {
       return ocorrencia;
     },
 
-    async atualizar(id: string, data: AtualizaOcorrenciaAcao) {
-      const parsed = OcorrenciaAcaoUpdateSchema.safeParse(data);
+    async atualizar(id: string, data: AtualizaOcorrencia) {
+      const parsed = OcorrenciaUpdateSchema.safeParse(data);
       if (!parsed.success) {
         throw new ValidationError(
           parsed.error.issues.map((e) => e.message).join(", ")

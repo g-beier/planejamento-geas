@@ -1,20 +1,17 @@
+import { AtualizaMeta, Meta, NovoMeta } from "@/types";
 import { z } from "zod";
 
 export const MetaSchema = z.object({
   id: z.uuid(),
-  diagnostico_id: z.uuid(),
+  plano_id: z.uuid(),
   descricao: z.string(),
-  valor_alvo: z.string().optional(),
-  unidade: z.string().optional(),
-  prazo: z.iso.date().optional(),
-});
+}) satisfies z.ZodType<Meta>;
 
-export const MetaCreateSchema = z.object({
-  diagnostico_id: z.uuid(),
-  descricao: z.string(),
-  valor_alvo: z.string().optional(),
-  unidade: z.string().optional(),
-  prazo: z.iso.date().optional(),
-});
+export const MetaCreateSchema = MetaSchema.pick({
+  plano_id: true,
+  descricao: true,
+}) satisfies z.ZodType<NovoMeta>;
 
-export const MetaUpdateSchema = MetaCreateSchema.partial();
+export const MetaUpdateSchema = MetaCreateSchema.pick({
+  descricao: true,
+}) satisfies z.ZodType<AtualizaMeta>;

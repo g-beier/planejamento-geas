@@ -14,7 +14,7 @@ export async function GET(request: Request) {
 
     const area = (areaParam as AreaIndicadorEnum) ?? undefined;
 
-    const indicadores = await indicadorService.listarTodos(area);
+    const indicadores = await indicadorService().listarTodos(area);
     return Response.json(indicadores, { status: 200 });
   } catch (error) {
     return handleError(error);

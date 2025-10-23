@@ -1,3 +1,4 @@
+import { Acao, AtualizaAcao, NovoAcao } from "@/types";
 import { z } from "zod";
 
 export const AcaoSchema = z.object({
@@ -5,30 +6,19 @@ export const AcaoSchema = z.object({
   plano_id: z.uuid(),
   descricao: z.string(),
   frequencia: z.string(),
-});
+  criado_em: z.iso.datetime(),
+  atualizado_em: z.iso.datetime(),
+}) satisfies z.ZodType<Acao>;
 
 export const AcaoCreateSchema = z.object({
   plano_id: z.uuid(),
-  diagnostico_id: z.uuid(),
   descricao: z.string(),
   frequencia: z.string(),
-});
+}) satisfies z.ZodType<NovoAcao>;
 
 export const AcaoUpdateSchema = z
   .object({
     descricao: z.string(),
     frequencia: z.string(),
   })
-  .partial();
-
-export const AcaoDiagnosticoSchema = z.object({
-  id: z.uuid(),
-  acao_id: z.uuid(),
-  diagnostico_id: z.uuid(),
-});
-
-export const AcaoResponsavelSchema = z.object({
-  id: z.uuid(),
-  acao_id: z.uuid(),
-  responsavel_id: z.uuid(),
-});
+  .partial() satisfies z.ZodType<AtualizaAcao>;

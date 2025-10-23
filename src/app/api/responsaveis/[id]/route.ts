@@ -8,7 +8,7 @@ type Params = {
 
 export async function GET(_: NextRequest, { params }: Params) {
   try {
-    const responsavel = await responsavelService.buscarPorId(params.id);
+    const responsavel = await responsavelService().buscarPorId(params.id);
     return Response.json(responsavel, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -18,7 +18,7 @@ export async function GET(_: NextRequest, { params }: Params) {
 export async function PUT(req: NextRequest, { params }: Params) {
   try {
     const body = await req.json();
-    const atualizado = await responsavelService.atualizar(params.id, body);
+    const atualizado = await responsavelService().atualizar(params.id, body);
     return Response.json(atualizado, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -27,7 +27,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
 export async function DELETE(_: NextRequest, { params }: Params) {
   try {
-    await responsavelService.remover(params.id);
+    await responsavelService().remover(params.id);
     return new Response(null, { status: 204 });
   } catch (error) {
     return handleError(error);

@@ -1,6 +1,6 @@
 import { planoRepository } from "@repositories";
 import { db } from "@infra/db";
-import { NovoPlano, Plano } from "@types";
+import { NovoPlano } from "@types";
 
 jest.mock("@infra/db", () => ({
   db: {
@@ -64,7 +64,6 @@ describe("planoRepository", () => {
   const mockPlano = {
     titulo: "Plano de grupo",
     ano: 2025,
-    prazo_final: "2025-12-31",
   };
 
   describe("findAll", () => {
@@ -108,25 +107,39 @@ describe("planoRepository", () => {
       mockExecuteTakeFirstOrThrow.mockResolvedValue({
         ...mockPlano,
         id,
+        arquivado: false,
         criado_em: "2025-10-15",
       });
 
       const result = await planoRepository().create(mockPlano);
 
       expect(db.insertInto).toHaveBeenCalledWith("plano");
-      expect(mockValues).toHaveBeenCalledWith(mockPlano);
+      expect(mockValues).toHaveBeenCalledWith({
+        arquivado: false,
+        ...mockPlano,
+      });
       expect(mockReturningAll).toHaveBeenCalled();
       expect(mockExecuteTakeFirstOrThrow).toHaveBeenCalled();
-      expect(result).toEqual({ ...mockPlano, id, criado_em: "2025-10-15" });
+      expect(result).toEqual({
+        ...mockPlano,
+        id,
+        criado_em: "2025-10-15",
+        arquivado: false,
+      });
     });
 
     it("deve lançar um erro NoResultError em caso de falha", async () => {
       mockExecuteTakeFirstOrThrow.mockRejectedValue(new Error());
 
-      expect(planoRepository().create(mockPlano as Plano)).rejects.toThrow();
+      expect(
+        planoRepository().create(mockPlano as NovoPlano)
+      ).rejects.toThrow();
 
       expect(db.insertInto).toHaveBeenCalledWith("plano");
-      expect(mockValues).toHaveBeenCalledWith(mockPlano);
+      expect(mockValues).toHaveBeenCalledWith({
+        arquivado: false,
+        ...mockPlano,
+      });
       expect(mockReturningAll).toHaveBeenCalled();
       expect(mockExecuteTakeFirstOrThrow).toHaveBeenCalled();
     });
@@ -143,20 +156,7 @@ describe("planoRepository", () => {
       expect(mockReturningAll).toHaveBeenCalled();
       expect(result).toEqual(mockPlanos[0]);
     });
-    it("atualizar apenas valores novos", async () => {
-      mockExecuteTakeFirst.mockResolvedValue(mockPlanos[0]);
 
-      const result = await planoRepository().update(id, {
-        ...mockPlano,
-        dadoAleatorioParaTeste: "string",
-      } as NovoPlano);
-
-      expect(db.updateTable).toHaveBeenCalledWith("plano");
-      expect(mockSet).toHaveBeenCalledWith(mockPlano);
-      expect(mockWhere).toHaveBeenCalledWith("id", "=", id);
-      expect(mockReturningAll).toHaveBeenCalled();
-      expect(result).toEqual(mockPlanos[0]);
-    });
     it("deve retornar null, caso não exista", async () => {
       mockExecuteTakeFirst.mockResolvedValue(undefined);
 

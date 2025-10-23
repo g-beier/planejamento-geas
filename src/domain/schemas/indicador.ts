@@ -1,3 +1,5 @@
+import { IndicadorArea } from "@/infra/tables";
+import { Indicador } from "@/types";
 import { z } from "zod";
 
 export enum AreaIndicadorEnum {
@@ -8,10 +10,13 @@ export enum AreaIndicadorEnum {
   FINANCAS = "FINANCAS",
   CRESCIMENTO = "CRESCIMENTO",
 }
-const AreaIndicador = z.enum(AreaIndicadorEnum);
+const AreaIndicadorSchema = z.enum(
+  AreaIndicadorEnum
+) satisfies z.ZodType<IndicadorArea>;
 
 export const IndicadorSchema = z.object({
   id: z.string().length(3),
   pergunta: z.string(),
-  area: AreaIndicador,
-});
+  area: AreaIndicadorSchema,
+  atualizado_em: z.iso.datetime(),
+}) satisfies z.ZodType<Indicador>;

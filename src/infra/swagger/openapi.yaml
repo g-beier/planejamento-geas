@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: PlaneGEAS
+  version: 0.1.0
+  description: >
+    Documentação da API de planejamento para grupos escoteiros
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+tags:
+  - name: Plano
+  - name: Diagnóstico
+  - name: Indicador
+  - name: Meta
+  - name: Ação
+  - name: Responsável
+
+paths:
+  /api/indicadores:
+    $ref: "./paths/indicadores.yaml#/paths/~1api~1indicadores"
+
+  /api/indicadores/{id}:
+    $ref: "./paths/indicadores.yaml#/paths/~1api~1indicadores~1{id}"
+
+components:
+  schemas:
+    $ref: "./components/schemas.yaml"

@@ -21,4 +21,16 @@ export const indicadorRepository = (trx: DBConnection = db) => ({
 
     return indicador ?? null;
   },
+
+  async findByIds(ids: string[]) {
+    if (ids.length == 0) return [];
+
+    const indicadores = await trx
+      .selectFrom("indicador")
+      .selectAll()
+      .where("id", "in", ids)
+      .execute();
+
+    return indicadores;
+  },
 });

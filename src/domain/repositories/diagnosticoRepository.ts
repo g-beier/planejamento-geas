@@ -11,11 +11,12 @@ export const diagnosticoRepository = (trx: DBConnection = db) => ({
       .execute();
   },
 
-  async findById(id: string) {
+  async findById(plano_id: string, indicador_id: string) {
     return trx
       .selectFrom("diagnostico")
       .selectAll()
-      .where("id", "=", id)
+      .where("plano_id", "=", plano_id)
+      .where("indicador_id", "=", indicador_id)
       .executeTakeFirst();
   },
 
@@ -28,20 +29,26 @@ export const diagnosticoRepository = (trx: DBConnection = db) => ({
     return novo;
   },
 
-  async update(id: string, data: AtualizaDiagnostico) {
+  async update(
+    plano_id: string,
+    indicador_id: string,
+    data: AtualizaDiagnostico
+  ) {
     const [atualizado] = await trx
       .updateTable("diagnostico")
       .set(data)
-      .where("id", "=", id)
+      .where("plano_id", "=", plano_id)
+      .where("indicador_id", "=", indicador_id)
       .returningAll()
       .execute();
     return atualizado;
   },
 
-  async delete(id: string) {
+  async delete(plano_id: string, indicador_id: string) {
     const res = await trx
       .deleteFrom("diagnostico")
-      .where("id", "=", id)
+      .where("plano_id", "=", plano_id)
+      .where("indicador_id", "=", indicador_id)
       .executeTakeFirst();
 
     const count =

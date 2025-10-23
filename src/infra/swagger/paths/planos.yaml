@@ -1,0 +1,73 @@
+paths:
+  /api/planos:
+    get:
+      summary:
+      tags: [Plano]
+      description:
+      operationId:
+      parameters:
+      responses:
+        "200":
+          description:
+          content:
+        "404":
+          description:
+
+    post:
+      summary:
+      tags: [Plano]
+      description:
+      operationId:
+      parameters:
+      responses:
+        "201":
+
+  /api/planos/{id}:
+    get:
+      summary:
+      tags: [Plano]
+      description:
+      operationId:
+      parameters:
+        - name: id
+          ind: path
+          required: true
+          description:
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+
+        "404":
+
+    put:
+      summary:
+      tags: [Plano]
+      description:
+      operationId:
+      parameters:
+        - name: id
+          ind: path
+          required: true
+          description:
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "201":
+
+    delete:
+      summary:
+      tags: [Plano]
+      description:
+      operationId:
+      parameters:
+        - name: id
+          ind: path
+          required: true
+          description:
+          schema:
+            type: string
+            format: uuid
+      responses:

@@ -1,34 +1,44 @@
-import {
-  acaoRepository,
-  diagnosticoRepository,
-  acaoDiagnosticoRepository,
-  responsavelRepository,
-} from "@repositories";
+import { acaoRepository } from "@repositories";
 import { AcaoCreateSchema, AcaoSchema, AcaoUpdateSchema } from "@schemas";
-import { AtualizaAcao, NovoAcao } from "@/types";
+import { Acao, AtualizaAcao, NovoAcao } from "@/types";
 import { NotFoundError, ValidationError } from "@infra/errors";
 import { db, DBConnection } from "@infra/db";
-import { acaoResponsavelRepository } from "../repositories/acaoResponsavelRepository";
+import z from "zod";
 
 export const acaoService = (conn: DBConnection = db) => {
   const acaoRepo = acaoRepository(conn);
-  const diagnosticoRepo = diagnosticoRepository(conn);
-  const responsavelRepo = responsavelRepository(conn);
-  const acaoDiagRepo = acaoDiagnosticoRepository(conn);
-  const acaoRespRepo = acaoResponsavelRepository(conn);
+
+  const uuid = z.uuid();
 
   return {
-    async listarPorPlano(planoId: string) {
-      return acaoRepo.findByPlano(planoId);
+    async listarPorPlano(planoId: string): Promise<Acao[]> {
+      const parsed = uuid.safeParse(planoId);
+      if (!parsed.success) {
+        throw new ValidationError("ID do plano inválido.");
+      }
+
+      return acaoRepo.findByPlano(parsed.data);
     },
 
-    async buscarPorId(id: string) {
-      const acao = acaoRepo.findById(id);
-      if (!acao) throw new NotFoundError("Ação não encontrada.");
-      return AcaoSchema.parse(acao);
+    async buscarPorId(id: string): Promise<Acao> {
+      const parsed = uuid.safeParse(id);
+      if (!parsed.success) {
+        throw new ValidationError("ID da ação inválido.");
+      }
+      const acao = await acaoRepo.findById(parsed.data);
+      if (!acao) {
+        throw new NotFoundError("Ação não encontrada.");
+      }
+
+      const parsedAcao = AcaoSchema.safeParse(acao);
+      if (!parsedAcao.success) {
+        throw new ValidationError("Dados de ação inválidos.");
+      }
+
+      return parsedAcao.data;
     },
 
-    async criar(data: NovoAcao) {
+    async criar(data: NovoAcao): Promise<Acao> {
       const parsed = AcaoCreateSchema.safeParse(data);
       if (!parsed.success) {
         throw new ValidationError(
@@ -36,105 +46,43 @@ export const acaoService = (conn: DBConnection = db) => {
         );
       }
 
-      const diagnostico = await diagnosticoRepo.findById(
-        parsed.data.diagnostico_id
-      );
-      if (!diagnostico) {
-        throw new NotFoundError("Diagnóstico não encontrado.");
-      }
-
-      const acao = await acaoRepository(conn).create(parsed.data);
-      await acaoDiagnosticoRepository(conn).create(
-        acao.id,
-        parsed.data.diagnostico_id
-      );
-
-      return acao;
+      const created = await acaoRepo.create(parsed.data);
+      return AcaoSchema.parse(created);
     },
 
-    async atualizar(id: string, data: AtualizaAcao) {
+    async atualizar(id: string, data: AtualizaAcao): Promise<Acao> {
+      const parsedId = uuid.safeParse(id);
+      if (!parsedId.success) {
+        throw new ValidationError("ID da ação inválido.");
+      }
+
       const parsed = AcaoUpdateSchema.safeParse(data);
       if (!parsed.success) {
         throw new ValidationError(
           parsed.error.issues.map((e) => e.message).join(", ")
         );
       }
-      const acao = acaoRepo.update(id, parsed.data);
-      return acao;
-    },
 
-    async adicionarDiagnostico(acao_id: string, diagnostico_id: string) {
-      const diagnostico = await diagnosticoRepo.findById(diagnostico_id);
-      if (!diagnostico) {
-        throw new NotFoundError("Diagnóstico não encontrado.");
-      }
-
-      const acao = await acaoRepo.findById(acao_id);
-      if (!acao) {
+      const existente = await acaoRepo.findById(parsedId.data);
+      if (!existente) {
         throw new NotFoundError("Ação não encontrada.");
       }
 
-      const duplicado = await acaoDiagRepo.findByAcaoAndDiagnosticoId(
-        acao_id,
-        diagnostico_id
-      );
-
-      if (duplicado) {
-        throw new ValidationError("Vínculo existente.");
-      }
-
-      return await acaoDiagRepo.create(acao_id, diagnostico_id);
+      const updated = await acaoRepo.update(parsedId.data, parsed.data);
+      return AcaoSchema.parse(updated);
     },
 
-    async removerDiagnostico(acao_id: string, diagnostico_id: string) {
-      const vinculo = await acaoDiagRepo.findByAcaoAndDiagnosticoId(
-        acao_id,
-        diagnostico_id
-      );
-      if (!vinculo) {
-        throw new NotFoundError("Vínculo não encontrado.");
+    async remover(id: string): Promise<void> {
+      const parsed = uuid.safeParse(id);
+      if (!parsed.success) {
+        throw new ValidationError("ID da ação inválido");
       }
 
-      return await acaoDiagRepo.delete(vinculo.id);
-    },
-
-    async adicionarResponsavel(acao_id: string, responsavel_id: string) {
-      const responsavel = await responsavelRepo.findById(responsavel_id);
-      if (!responsavel) {
-        throw new NotFoundError("Responsável não encontrado.");
-      }
-
-      const acao = await acaoRepo.findById(acao_id);
-      if (!acao) {
+      const deleted = await acaoRepo.delete(parsed.data);
+      if (!deleted) {
         throw new NotFoundError("Ação não encontrada.");
       }
-
-      const duplicado = await acaoRespRepo.findByAcaoAndResponsavelId(
-        acao_id,
-        responsavel_id
-      );
-
-      if (duplicado) {
-        throw new ValidationError("Vínculo existente.");
-      }
-
-      return await acaoRespRepo.create(acao_id, responsavel_id);
-    },
-
-    async removerResponsavel(acao_id: string, responsavel_id: string) {
-      const vinculo = await acaoRespRepo.findByAcaoAndResponsavelId(
-        acao_id,
-        responsavel_id
-      );
-      if (!vinculo) {
-        throw new NotFoundError("Vínculo não encontrado.");
-      }
-
-      return await acaoRespRepo.delete(vinculo.id);
-    },
-
-    async remover(id: string) {
-      return acaoRepo.delete(id);
+      return;
     },
   };
 };

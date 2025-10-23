@@ -11,21 +11,24 @@ describe("acaoService", () => {
       plano_id: crypto.randomUUID(),
       descricao: "Ação #001: vamos fazer um acampamento",
       frequencia: "OUTUBRO",
-      criado_em: null,
+      criado_em: new Date().toISOString(),
+      atualizado_em: new Date().toISOString(),
     },
     {
       id: crypto.randomUUID(),
       plano_id: crypto.randomUUID(),
       descricao: "Ação #002: vamos fazer um fórum de jovens",
       frequencia: "até NOVEMBRO",
-      criado_em: null,
+      criado_em: new Date().toISOString(),
+      atualizado_em: new Date().toISOString(),
     },
     {
       id: crypto.randomUUID(),
       plano_id: crypto.randomUUID(),
       descricao: "Ação #003: vamos fazer um conselho de pais",
       frequencia: "a cada ciclo de programa",
-      criado_em: null,
+      criado_em: new Date().toISOString(),
+      atualizado_em: new Date().toISOString(),
     },
   ];
 

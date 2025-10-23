@@ -16,5 +16,7 @@ export const indicadorService = (conn: DBConnection = db) => {
       if (!indicador) throw new NotFoundError("Indicador não encontrado");
       return IndicadorSchema.parse(indicador);
     },
+
+    async buscarPorIds() {},
   };
 };

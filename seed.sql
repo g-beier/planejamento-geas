@@ -1,6 +1,6 @@
-INSERT INTO responsavel (registro, nome_exibicao) VALUES
-  ('607475-8', 'GUSTAV'),
-  ('361-1', 'GIBA');
+INSERT INTO responsavel (nome) VALUES
+  ('GUSTAV'),
+  ('GIBA');
 
 INSERT INTO indicador  (id, pergunta, area) VALUES
   ('001', 'Conseguimos fazer com que nossos jovens assumam seu próprio desenvolvimento e sejam responsáveis pelas decisões que tomam?', 'VALORES'),

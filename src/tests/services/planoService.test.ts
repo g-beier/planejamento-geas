@@ -9,15 +9,15 @@ describe("planoService", () => {
       id: crypto.randomUUID(),
       titulo: "Plano do Grupo",
       ano: 2025,
-      prazo_final: "2025-12-30",
       criado_em: "2025-10-13",
+      arquivado: true,
     },
     {
       id: crypto.randomUUID(),
       titulo: "Plano do Grupo",
       ano: 2024,
-      prazo_final: "2024-12-30",
       criado_em: "2024-10-13",
+      arquivado: false,
     },
   ];
 
@@ -73,20 +73,18 @@ describe("planoService", () => {
       const dados = {
         titulo: "Plano do Grupo",
         ano: 2025,
-        prazo_final: "2025-12-31",
       };
 
       const result = await planoService().criar(dados);
 
       expect(result).toEqual(mockPlanos[0]);
-      expect(mockCreate).toHaveBeenCalledWith(dados);
+      expect(mockCreate).toHaveBeenCalledWith({ arquivado: false, ...dados });
     });
     it("deve lançar ValidationError se campos obrigatórios não estiverem preenchidos", async () => {
       mockCreate.mockResolvedValue(mockPlanos[0]);
 
       const dados = {
         titulo: "Plano do Grupo",
-        prazo_final: "2025-12-31",
       };
 
       expect(planoService().criar(dados)).rejects.toThrow(ValidationError);
@@ -111,7 +109,9 @@ describe("planoService", () => {
       expect(planoService().atualizar(id, { ano: 2000 })).rejects.toThrow(
         NotFoundError
       );
-      expect(mockUpdate).toHaveBeenCalledWith(id, { ano: 2000 });
+      expect(mockUpdate).toHaveBeenCalledWith(id, {
+        ano: 2000,
+      });
     });
   });
 

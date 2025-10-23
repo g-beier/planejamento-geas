@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       );
     }
 
-    const acoes = await acaoService.listarPorPlano(planoId);
+    const acoes = await acaoService().listarPorPlano(planoId);
     return NextResponse.json(acoes, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const acao = await acaoService.criar(body);
+    const acao = await acaoService().criar(body);
     return NextResponse.json(acao, { status: 201 });
   } catch (error) {
     return handleError(error);

@@ -1,0 +1,60 @@
+Plano:
+  description: Plano que agrega indicadores e outras entidades para o planejamento.
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    titulo:
+      type: string
+    ano:
+      type: integer
+    prazo_final:
+      type: string
+      format: date
+
+PlanoCreate:
+  type: object
+  required: [titulo, ano, prazo_final]
+  properties:
+    titulo:
+      type: string
+    ano:
+      type: integer
+    prazo_final:
+      type: string
+      format: date
+
+PlanoUpdate:
+  type: object
+  properties:
+    titulo:
+      type: string
+    ano:
+      type: integer
+    prazo_final:
+      type: string
+      format: date
+
+AreaIndicador:
+  type: string
+  enum:
+    - VALORES
+    - PROGRAMA_EDUCATIVO
+    - RECURSOS_HUMANOS
+    - GESTAO
+    - FINANCAS
+    - CRESCIMENTO
+
+Indicador:
+  type: object
+  properties:
+    id:
+      type: string
+    pergunta:
+      type: string
+    area:
+      $ref: "#/components/schemas/AreaIndicador"
+
+Diagnostico:
+  type: object
