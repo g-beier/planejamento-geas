@@ -5,31 +5,33 @@ import { handleError } from "@/infra/errors";
 /**
  * GET /api/acoes
  * Retorna a lista de ações filtradas por plano.
- * Exemplo? /api/acoes?plano_id=XXXXXX-XXXX-XXXX-XXXXXX
+ * Exemplo? /api/planos/:plano_id/acoes
  */
-export async function GET(request: Request) {
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ plano_id: string }> }
+) {
   try {
-    const { searchParams } = new URL(request.url);
-    const planoId = searchParams.get("plano_id");
+    const { plano_id } = await context.params;
 
-    if (!planoId) {
-      return NextResponse.json(
-        { error: "plano_id é obrigatório" },
-        { status: 400 }
-      );
-    }
+    const acoes = await acaoService().listarPorPlano(plano_id);
 
-    const acoes = await acaoService().listarPorPlano(planoId);
     return NextResponse.json(acoes, { status: 200 });
   } catch (error) {
     return handleError(error);
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  context: { params: Promise<{ plano_id: string }> }
+) {
   try {
+    const { plano_id } = await context.params;
     const body = await request.json();
-    const acao = await acaoService().criar(body);
+
+    const acao = await acaoService().criar({ ...body, plano_id });
+
     return NextResponse.json(acao, { status: 201 });
   } catch (error) {
     return handleError(error);

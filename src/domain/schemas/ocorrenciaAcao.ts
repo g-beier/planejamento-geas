@@ -1,5 +1,6 @@
-import { AtualizaOcorrencia, NovoOcorencia, Ocorrencia } from "@/types";
+import { AtualizaOcorrencia, NovoOcorrencia, Ocorrencia } from "@/types";
 import z from "zod";
+import { OcorrenciaSecaoSchema } from "./ocorrenciaSecao";
 
 export const OcorrenciaSchema = z.object({
   id: z.uuid(),
@@ -18,7 +19,7 @@ export const OcorrenciaCreateSchema = OcorrenciaSchema.pick({
   ordem: true,
 }).extend({
   realizado: z.boolean().optional().default(false),
-}) satisfies z.ZodType<NovoOcorencia>;
+}) satisfies z.ZodType<NovoOcorrencia>;
 
 export const OcorrenciaUpdateSchema = OcorrenciaCreateSchema.pick({
   descricao: true,
@@ -26,3 +27,15 @@ export const OcorrenciaUpdateSchema = OcorrenciaCreateSchema.pick({
   data_realizacao: true,
   ordem: true,
 }) satisfies z.ZodType<AtualizaOcorrencia>;
+
+export const OcorrenciaComSecoesSchema = OcorrenciaSchema.extend({
+  secoes: z
+    .array(
+      OcorrenciaSecaoSchema.pick({
+        secao_id: true,
+        realizado: true,
+        data_realizacao: true,
+      })
+    )
+    .optional(),
+});

@@ -1,0 +1,41 @@
+paths:
+  /planos/{plano_id}/acoes:
+    get:
+      summary: Listar ações do plano
+      tags: [Ação]
+      responses:
+        "200":
+        description: Lista de ações retornada com sucesso
+
+    post:
+      summary: Criar ação no plano
+      tags: [Ação]
+      responses:
+        "201":
+          description: Ação criada com sucesso
+
+  /planos/{plano_id}/acoes/{acao_id}:
+    get:
+      summary: Buscar ação
+      tags: [Ação]
+      responses:
+        "200":
+          description: Ação retornada com sucesso
+        "404":
+          description: Ação não encontrada
+
+    put:
+      summary: Atualizar ação
+      tags: [Ação]
+      responses:
+        "200":
+          description: Ação atualizada com sucesso
+        "400":
+          description: Dados inválidos
+
+    delete:
+      summary: Remover ação
+      tags: [Ação]
+      responses:
+        "204":
+          description: Ação removida com sucesso

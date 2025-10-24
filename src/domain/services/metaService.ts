@@ -7,8 +7,8 @@ export const metaService = (conn: DBConnection = db) => {
   const metaRepo = metaRepository(conn);
 
   return {
-    async listarTodos() {
-      return metaRepo.findAll();
+    async listarTodos(plano_id: string) {
+      return metaRepo.findByPlano(plano_id);
     },
 
     async buscarPorId(id: string) {

@@ -3,7 +3,7 @@ import { Insertable, Selectable, Updateable } from "kysely";
 
 export type OcorrenciaTable = DB["ocorrencia"];
 export type Ocorrencia = Selectable<OcorrenciaTable>;
-export type NovoOcorencia = Insertable<OcorrenciaTable>;
+export type NovoOcorrencia = Insertable<OcorrenciaTable>;
 export type AtualizaOcorrencia = Updateable<OcorrenciaTable>;
 
 export type OcorrenciaSecaoTable = DB["ocorrencia_secao"];

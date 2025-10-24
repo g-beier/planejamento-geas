@@ -5,7 +5,7 @@ import {
   indicadorRepository,
   planoRepository,
 } from "@repositories";
-import { PlanoCreateSchema } from "../schemas";
+import { PlanoCreateSchema } from "@schemas";
 import { NotFoundError, ValidationError } from "@/infra/errors";
 
 export const criarNovoPlano = (conn: DBConnection) => {

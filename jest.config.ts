@@ -17,6 +17,8 @@ const config: Config = {
     "^@repositories$": "<rootDir>/src/domain/repositories",
     "^@schemas/(.*)$": "<rootDir>/src/domain/schemas/$1",
     "^@schemas$": "<rootDir>/src/domain/schemas",
+    "^@usecases/(.*)$": "<rootDir>/src/domain/usecases/$1",
+    "^@usecases$": "<rootDir>/src/domain/usecases",
     "^@infra/(.*)$": "<rootDir>/src/infra/$1",
     "^@types/(.*)$": "<rootDir>/src/types/$1",
     "^@types$": "<rootDir>/src/types",

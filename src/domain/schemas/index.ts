@@ -6,3 +6,4 @@ export * from "./ocorrenciaAcao";
 export * from "./plano";
 export * from "./metaAcao";
 export * from "./acaoResponsavel";
+export * from "./secao";

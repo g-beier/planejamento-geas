@@ -1,0 +1,39 @@
+paths:
+  /secoes:
+    get:
+      summary: Listar seções
+      tags: [Seção]
+      responses:
+        "200":
+          description: Lista de seções retornada com sucesso
+
+    post:
+      summary: Criar seção
+      tags: [Seção]
+      responses:
+        "201":
+          description: Seção criada com sucesso
+
+  /secoes/{id}:
+    get:
+      summary: Buscar seção
+      tags: [Seção]
+      responses:
+        "200":
+          description: Seção retornada com sucesso
+        "404":
+          description: Seção não encontrada
+
+    put:
+      summary: Atualizar seção
+      tags: [Seção]
+      responses:
+        "200":
+        description: Seção atualizada com sucesso
+
+    delete:
+      summary: Remover seção
+      tags: [Seção]
+      responses:
+        "204":
+        description: Seção removida com sucesso

@@ -3,7 +3,15 @@ import { NotFoundError } from "@/infra/errors";
 import { AtualizaMeta, NovoMeta } from "@/types";
 
 export const metaRepository = (trx: DBConnection = db) => ({
-  async findAll() {},
+  async findByPlano(plano_id: string) {
+    const meta = await trx
+      .selectFrom("meta")
+      .selectAll()
+      .where("plano_id", "=", plano_id)
+      .execute();
+    if (!meta) throw new NotFoundError("Metas não encontradas.");
+    return meta;
+  },
   async findById(id: string) {
     const meta = await trx
       .selectFrom("meta")

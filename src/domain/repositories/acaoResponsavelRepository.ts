@@ -9,7 +9,7 @@ export const acaoResponsavelRepository = (trx: DBConnection = db) => ({
       .execute();
   },
 
-  async findByAcaoAndResponsavelId(acao_id: string, responsavel_id: string) {
+  async findByAcaoAndResponsavel(acao_id: string, responsavel_id: string) {
     return trx
       .selectFrom("acao_responsavel")
       .selectAll()

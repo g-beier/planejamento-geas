@@ -1,0 +1,39 @@
+paths:
+  /responsaveis:
+    get:
+      summary: Listar responsáveis
+      tags: [Responsável]
+      responses:
+        "200":
+          description: Lista de responsáveis retornada com sucesso
+
+    post:
+      summary: Criar responsável
+      tags: [Responsável]
+      responses:
+        "201":
+          description: Responsável criado com sucesso
+
+  /responsaveis/{id}:
+    get:
+      summary: Buscar responsável
+      tags: [Responsável]
+      responses:
+        "200":
+          description: Responsável retornado com sucesso
+        "404":
+          description: Responsável não encontrado
+
+    put:
+      summary: Atualizar responsável
+      tags: [Responsável]
+      responses:
+        "200":
+          description: Responsável atualizado com sucesso
+
+    delete:
+      summary: Remover responsável
+      tags: [Responsável]
+      responses:
+        "204":
+          description: Responsável removido com sucesso

@@ -1,4 +1,4 @@
-import { responsavelService } from "@/domain/services/responsavelService";
+import { secaoService } from "@services";
 import { handleError } from "@/infra/errors/handleError";
 
 export async function GET(
@@ -8,7 +8,7 @@ export async function GET(
   try {
     const { id } = await context.params;
 
-    const responsavel = await responsavelService().buscarPorId(id);
+    const responsavel = await secaoService().buscarPorId(id);
 
     return Response.json(responsavel, { status: 200 });
   } catch (error) {
@@ -24,7 +24,7 @@ export async function PUT(
     const { id } = await context.params;
     const body = await req.json();
 
-    const atualizado = await responsavelService().atualizar(id, body);
+    const atualizado = await secaoService().atualizar(id, body);
 
     return Response.json(atualizado, { status: 200 });
   } catch (error) {
@@ -39,7 +39,7 @@ export async function DELETE(
   try {
     const { id } = await context.params;
 
-    await responsavelService().remover(id);
+    await secaoService().remover(id);
 
     return new Response(null, { status: 204 });
   } catch (error) {

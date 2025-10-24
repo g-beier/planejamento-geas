@@ -1,4 +1,4 @@
-import { AtualizaOcorrencia, NovoOcorencia } from "@types";
+import { AtualizaOcorrencia, NovoOcorrencia } from "@types";
 import {
   OcorrenciaSchema,
   OcorrenciaCreateSchema,
@@ -8,7 +8,7 @@ import { NotFoundError, ValidationError } from "@infra/errors";
 import { acaoRepository, ocorrenciaRepository } from "@repositories";
 import { DBConnection, db } from "@/infra/db";
 
-export const ocorrenciaAcaoService = (conn: DBConnection = db) => {
+export const ocorrenciaService = (conn: DBConnection = db) => {
   const acaoRepo = acaoRepository(conn);
   const ocorrenciaAcaoRepo = ocorrenciaRepository(conn);
 
@@ -24,7 +24,7 @@ export const ocorrenciaAcaoService = (conn: DBConnection = db) => {
       return OcorrenciaSchema.parse(ocorrenciaAcao);
     },
 
-    async criar(data: NovoOcorencia) {
+    async criar(data: NovoOcorrencia) {
       const parsed = OcorrenciaCreateSchema.safeParse(data);
       if (!parsed.success) {
         throw new ValidationError(

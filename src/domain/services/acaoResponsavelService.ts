@@ -21,7 +21,7 @@ export const acaoResponsavelService = (conn: DBConnection = db) => {
         throw new ValidationError("IDs inválidos para ação ou responsável.");
       }
 
-      const duplicado = await acaoRespRepo.findByAcaoAndResponsavelId(
+      const duplicado = await acaoRespRepo.findByAcaoAndResponsavel(
         parsedAcao.data,
         parsedResp.data
       );
@@ -43,7 +43,7 @@ export const acaoResponsavelService = (conn: DBConnection = db) => {
         throw new ValidationError("IDs inválidos para ação ou responsável.");
       }
 
-      const vinculo = await acaoRespRepo.findByAcaoAndResponsavelId(
+      const vinculo = await acaoRespRepo.findByAcaoAndResponsavel(
         parsedAcao.data,
         parsedResp.data
       );

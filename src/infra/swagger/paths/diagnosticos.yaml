@@ -1,0 +1,41 @@
+paths:
+  /planos/{plano_id}/diagnosticos:
+    get:
+      summary: Listar diagnósticos do plano
+      tags: [Diagnóstico]
+      responses:
+        "200":
+          description: Lista de diagnósticos retornada com sucesso
+
+    post:
+      summary: Criar diagnóstico no plano
+      tags: [Diagnóstico]
+      responses:
+        "201":
+          description: Diagnóstico criado com sucesso
+
+  /planos/{plano_id}/diagnosticos/{indicador_id}:
+    get:
+      summary: Buscar diagnóstico específico
+      tags: [Diagnóstico]
+      responses:
+        "200":
+          description: Diagnóstico retornado com sucesso
+        "404":
+          description: Diagnóstico não encontrado
+
+    put:
+      summary: Atualizar diagnóstico
+      tags: [Diagnóstico]
+      responses:
+        "200":
+          description: Diagnóstico atualizado com sucesso
+        "400":
+          description: Dados inválidos
+
+    delete:
+      summary: Remover diagnóstico
+      tags: [Diagnóstico]
+      responses:
+        "204":
+          description: Diagnóstico removido com sucesso

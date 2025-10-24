@@ -3,7 +3,7 @@ import {
   acaoRepository,
   acaoResponsavelRepository,
   responsavelRepository,
-} from "../repositories";
+} from "@repositories";
 import z from "zod";
 import { ConflictError, NotFoundError, ValidationError } from "@/infra/errors";
 
@@ -34,7 +34,7 @@ export const vincularResponsavelAcao = (conn: DBConnection) => {
         throw new NotFoundError("Responsável não encontrado.");
       }
 
-      const duplicado = await acaoRespRepo.findByAcaoAndResponsavelId(
+      const duplicado = await acaoRespRepo.findByAcaoAndResponsavel(
         acao_id,
         responsavel_id
       );

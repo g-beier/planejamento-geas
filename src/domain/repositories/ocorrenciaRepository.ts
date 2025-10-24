@@ -1,6 +1,6 @@
 import { db, DBConnection } from "@/infra/db";
 import { NotFoundError } from "@/infra/errors";
-import { AtualizaOcorrencia, NovoOcorencia } from "@types";
+import { AtualizaOcorrencia, NovoOcorrencia } from "@types";
 
 export const ocorrenciaRepository = (trx: DBConnection = db) => ({
   async findByAcao(acao_id: string) {
@@ -21,7 +21,7 @@ export const ocorrenciaRepository = (trx: DBConnection = db) => ({
     return ocorrencia;
   },
 
-  async create(data: NovoOcorencia) {
+  async create(data: NovoOcorrencia) {
     return trx
       .insertInto("ocorrencia")
       .values(data)
@@ -29,7 +29,7 @@ export const ocorrenciaRepository = (trx: DBConnection = db) => ({
       .executeTakeFirstOrThrow();
   },
 
-  async bulkCreate(data: NovoOcorencia[]) {
+  async bulkCreate(data: NovoOcorrencia[]) {
     if (data.length == 0) return [];
     return trx.insertInto("ocorrencia").values(data).returningAll().execute();
   },

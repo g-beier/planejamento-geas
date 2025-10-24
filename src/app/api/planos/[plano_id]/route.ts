@@ -7,11 +7,11 @@ import { handleError } from "@/infra/errors";
  */
 export async function GET(
   _: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ plano_id: string }> }
 ) {
   try {
-    const { id } = await context.params;
-    const plano = await planoService().buscarPorId(id);
+    const { plano_id } = await context.params;
+    const plano = await planoService().buscarPorId(plano_id);
     return Response.json(plano, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -19,17 +19,17 @@ export async function GET(
 }
 
 /**
- * PUT /api/planos/:id
+ * PUT /api/planos/:plano_id
  * Atualiza um plano existente.
  */
 export async function PUT(
   request: Request,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ plano_id: string }> }
 ) {
   try {
-    const { id } = await context.params;
+    const { plano_id } = await context.params;
     const body = await request.json();
-    const planoAtualizado = await planoService().atualizar(id, body);
+    const planoAtualizado = await planoService().atualizar(plano_id, body);
     return Response.json(planoAtualizado, { status: 200 });
   } catch (error) {
     return handleError(error);
@@ -37,7 +37,7 @@ export async function PUT(
 }
 
 /**
- * DELETE /api/planos/:id
+ * DELETE /api/planos/:plano_id
  * Remove um plano pelo ID.
  */
 export async function DELETE(
